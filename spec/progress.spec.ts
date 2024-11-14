@@ -20,7 +20,9 @@ describe("achievement progress", () => {
         const achievement = new WorldStateAchievement({
             id: "ach",
             label: "Test",
-            isAchieved: jasmine.createSpy(),
+            matcher: {
+                isInState: jasmine.createSpy(),
+            },
         });
         const progress = achievementProgress(eventCounter, achievement);
         expect(progress).toBe(0);

@@ -5,7 +5,10 @@ import {
     WorldEventAchievement,
     WorldEventMatcher,
 } from "./achievement/world-event-achievement";
-import { WorldStateAchievement } from "./achievement/world-state-achievement";
+import {
+    WorldStateAchievement,
+    WorldStateMatcher,
+} from "./achievement/world-state-achievement";
 import { EventCounter } from "./event-counter";
 
 export class WorldAchievementWatcher {
@@ -17,6 +20,8 @@ export class WorldAchievementWatcher {
         new Set<WorldEventAchievement>();
 
     private readonly worldEventMatchers = new Map<string, WorldEventMatcher>();
+    private readonly worldStateMatchers = new Map<string, WorldStateMatcher>();
+    private readonly activeStates = new Set<string>();
 
     constructor(
         private readonly achievements: Achievement[],
@@ -39,6 +44,10 @@ export class WorldAchievementWatcher {
 
         for (const achievement of remainingAchievements) {
             if (achievement instanceof WorldStateAchievement) {
+                this.worldStateMatchers.set(
+                    achievement.matcher.eventLabel,
+                    achievement.matcher,
+                );
                 this.watchedWorldStateAchievements.add(achievement);
             } else if (achievement instanceof WorldEventAchievement) {
                 this.worldEventMatchers.set(
@@ -53,8 +62,31 @@ export class WorldAchievementWatcher {
     }
 
     update() {
-        for (const achievement of this.watchedWorldStateAchievements) {
-            if (achievement.isAchieved(this.world)) {
+        let didCount = false;
+        for (const [eventLabel, matcher] of this.worldStateMatchers) {
+            const inState = matcher.isInState(this.world);
+            const wasInState = this.activeStates.has(eventLabel);
+
+            if (inState === wasInState) continue;
+
+            if (inState) {
+                this.activeStates.add(eventLabel);
+                this.eventCounter.onEvent(eventLabel);
+                didCount = true;
+            } else {
+                this.activeStates.delete(eventLabel);
+            }
+        }
+
+        if (didCount) {
+            for (const achievement of this.watchedWorldStateAchievements) {
+                const eventCount = this.eventCounter.eventCount(
+                    achievement.matcher.eventLabel,
+                );
+                if (eventCount < achievement.eventCount) {
+                    continue;
+                }
+
                 this.watchedWorldStateAchievements.delete(achievement);
                 this.unlocker.unlock(achievement.id);
             }

@@ -20,17 +20,17 @@ describe("WorldAchievementWatcher", () => {
     beforeEach(() => {
         world = new World();
         unlocker = {
-            unlock: jasmine.createSpy(),
-            isUnlocked: jasmine.createSpy(),
+            unlock: jasmine.createSpy("unlock"),
+            isUnlocked: jasmine.createSpy("isUnlocked"),
         };
 
         const events = new Map<string, number>();
         eventCounter = {
             eventCount: jasmine
-                .createSpy()
+                .createSpy("eventCount")
                 .and.callFake((id) => events.get(id) || 0),
             onEvent: jasmine
-                .createSpy()
+                .createSpy("onEvent")
                 .and.callFake((id) =>
                     events.set(id, (events.get(id) || 0) + 1),
                 ),
@@ -48,11 +48,13 @@ describe("WorldAchievementWatcher", () => {
         return watcher;
     }
 
-    it("can watch a world state achievement", () => {
+    it("can unlock a world state achievement", () => {
         const achievement = new WorldStateAchievement({
             id: "ach",
             label: "Test",
-            isAchieved: (world) => world.entities.size > 0,
+            matcher: {
+                isInState: (world) => world.entities.size > 0,
+            },
         });
 
         const watcher = createWatcher([achievement]);
@@ -62,6 +64,87 @@ describe("WorldAchievementWatcher", () => {
         world.entities.add(entity());
         watcher.update();
         expect(unlocker.unlock).toHaveBeenCalledWith(achievement.id);
+    });
+
+    it("can unlock a world state achievement that requires multiple occurrences", () => {
+        const achievement = new WorldStateAchievement({
+            id: "ach",
+            label: "Test",
+            eventCount: 2,
+            matcher: {
+                eventLabel: "test",
+                isInState: (world) => world.entities.size > 0,
+            },
+        });
+
+        const watcher = createWatcher([achievement]);
+        watcher.update();
+        expect(eventCounter.onEvent).not.toHaveBeenCalled();
+        expect(unlocker.unlock).not.toHaveBeenCalled();
+
+        const testEntity = entity();
+
+        world.entities.add(testEntity);
+        watcher.update();
+        expect(eventCounter.onEvent).toHaveBeenCalledTimes(1);
+        expect(unlocker.unlock).not.toHaveBeenCalled();
+
+        watcher.update();
+        expect(eventCounter.onEvent).toHaveBeenCalledTimes(1);
+        expect(unlocker.unlock).not.toHaveBeenCalled();
+
+        testEntity.remove();
+        watcher.update();
+        expect(eventCounter.onEvent).toHaveBeenCalledTimes(1);
+        expect(unlocker.unlock).not.toHaveBeenCalled();
+
+        world.entities.add(testEntity);
+        watcher.update();
+        expect(eventCounter.onEvent).toHaveBeenCalledTimes(2);
+        expect(unlocker.unlock).toHaveBeenCalledWith(achievement.id);
+    });
+
+    it("can manage multiple world state achievements with the same event label", () => {
+        const achievement1 = new WorldStateAchievement({
+            id: "ach1",
+            label: "Test",
+            eventCount: 1,
+            matcher: {
+                eventLabel: "test",
+                isInState: (world) => world.entities.size > 0,
+            },
+        });
+        const achievement2 = new WorldStateAchievement({
+            id: "ach2",
+            label: "Test",
+            eventCount: 2,
+            matcher: {
+                eventLabel: "test",
+                isInState: (world) => world.entities.size > 0,
+            },
+        });
+
+        const watcher = createWatcher([achievement1, achievement2]);
+        watcher.update();
+        expect(eventCounter.onEvent).not.toHaveBeenCalled();
+        expect(unlocker.unlock).not.toHaveBeenCalled();
+
+        const testEntity = entity();
+
+        world.entities.add(testEntity);
+        watcher.update();
+        expect(unlocker.unlock).toHaveBeenCalledWith(achievement1.id);
+        expect(unlocker.unlock).not.toHaveBeenCalledWith(achievement2.id);
+
+        testEntity.remove();
+        watcher.update();
+        expect(unlocker.unlock).toHaveBeenCalledWith(achievement1.id);
+        expect(unlocker.unlock).not.toHaveBeenCalledWith(achievement2.id);
+
+        world.entities.add(testEntity);
+        watcher.update();
+        expect(unlocker.unlock).toHaveBeenCalledWith(achievement1.id);
+        expect(unlocker.unlock).toHaveBeenCalledWith(achievement2.id);
     });
 
     it("can ignore a world event achievement", () => {
