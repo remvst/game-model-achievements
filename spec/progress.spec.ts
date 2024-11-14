@@ -25,7 +25,7 @@ describe("achievement progress", () => {
             },
         });
         const progress = achievementProgress(eventCounter, achievement);
-        expect(progress).toBe(0);
+        expect(progress).toBe(null);
     });
 
     it("should return the progress for a world event achievement", () => {

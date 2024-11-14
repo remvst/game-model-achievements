@@ -6,7 +6,7 @@ import { EventCounter } from "./event-counter";
 export function achievementProgress(
     eventCounter: EventCounter,
     achievement: Achievement,
-): number {
+): number | null {
     if (achievement instanceof ActionAchievement) {
         return (
             eventCounter.eventCount(achievement.eventLabel) /
@@ -19,5 +19,5 @@ export function achievementProgress(
         );
     }
 
-    return 0;
+    return null;
 }

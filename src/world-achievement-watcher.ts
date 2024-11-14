@@ -34,15 +34,7 @@ export class WorldAchievementWatcher {
     }
 
     postBind() {
-        const remainingAchievements = this.achievements.filter(
-            (achievement) => !this.unlocker.isUnlocked(achievement.id),
-        );
-        console.log(
-            "Watching for achievements:",
-            remainingAchievements.map((a) => a.id),
-        );
-
-        for (const achievement of remainingAchievements) {
+        for (const achievement of this.achievements) {
             if (achievement instanceof WorldStateAchievement) {
                 this.worldStateMatchers.set(
                     achievement.matcher.eventLabel,

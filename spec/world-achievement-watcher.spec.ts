@@ -21,7 +21,6 @@ describe("WorldAchievementWatcher", () => {
         world = new World();
         unlocker = {
             unlock: jasmine.createSpy("unlock"),
-            isUnlocked: jasmine.createSpy("isUnlocked"),
         };
 
         const events = new Map<string, number>();
