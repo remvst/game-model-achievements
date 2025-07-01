@@ -1,7 +1,17 @@
 import { AchievementCondition } from "../condition/achievement-condition";
 
-export interface Achievement {
+export class Achievement {
     readonly id: string;
     readonly label: string;
-    readonly matcher: AchievementCondition;
+    readonly condition: AchievementCondition;
+
+    constructor(opts: {
+        readonly id: string;
+        readonly label: string;
+        readonly condition: AchievementCondition;
+    }) {
+        this.id = opts.id;
+        this.label = opts.label;
+        this.condition = opts.condition;
+    }
 }

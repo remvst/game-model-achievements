@@ -1,33 +1,22 @@
-import { World } from "@remvst/game-model";
 import { AchievementUnlocker } from "../achievement-unlocker";
-import { EventCounter } from "../event-counter";
+import { EventCountRecorder } from "../counting/event-count-recorder";
 
 export abstract class AchievementCondition {
-    protected world: World;
+    protected countRecorder: EventCountRecorder;
     protected unlocker: AchievementUnlocker;
-    protected eventCounter: EventCounter;
+    protected achievementId: string;
 
     bind(
-        world: World,
+        countRecorder: EventCountRecorder,
         unlocker: AchievementUnlocker,
-        eventCounter: EventCounter,
-    ) {
-        this.world = world;
+        achievementId: string,
+    ): void {
+        this.countRecorder = countRecorder;
         this.unlocker = unlocker;
-        this.eventCounter = eventCounter;
+        this.achievementId = achievementId;
     }
 
     postBind() {}
 
-    unbind() {
-        this.world = null;
-        this.unlocker = null;
-        this.eventCounter = null;
-    }
-
-    update() {}
-
-    achieve() {
-        this.unlocker.unlock();
-    }
+    abstract onEventCounted(eventId: string): void;
 }

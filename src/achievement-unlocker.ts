@@ -1,4 +1,4 @@
 export interface AchievementUnlocker {
-    unlock(): void;
-    fail(): void;
+    unlock(achievementId: string): void;
+    fail(achievementId: string): void;
 }

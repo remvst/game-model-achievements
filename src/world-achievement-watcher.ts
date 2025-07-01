@@ -1,64 +1,70 @@
 import { World } from "@remvst/game-model";
 import { AchievementUnlocker } from "./achievement-unlocker";
 import { Achievement } from "./achievement/achievement";
-import { EventCounter } from "./event-counter";
+import { EventCountRecorder } from "./counting/event-count-recorder";
+import { EventCounter } from "./counting/event-counter";
 
-export class WorldAchievementWatcher {
+export class WorldAchievementWatcher implements EventCountRecorder {
     private world: World;
 
+    private readonly counters: EventCounter[];
     private readonly achievements: Achievement[];
     private readonly unlocker: AchievementUnlocker;
-    private readonly eventCounter: EventCounter;
-
-    private readonly activeAchievements: Achievement[] = [];
+    private readonly eventCountRecorder: EventCountRecorder;
 
     constructor(opts: {
-        readonly achievements: Achievement[],
-        readonly unlocker: AchievementUnlocker,
-        readonly eventCounter: EventCounter,
+        readonly counters: EventCounter[];
+        readonly achievements: Achievement[];
+        readonly unlocker: AchievementUnlocker;
+        readonly eventCountRecorder: EventCountRecorder;
     }) {
+        this.counters = opts.counters;
         this.achievements = opts.achievements;
         this.unlocker = opts.unlocker;
-        this.eventCounter = opts.eventCounter;
+        this.eventCountRecorder = opts.eventCountRecorder;
     }
 
-    private removeActiveAchievement(achievement: Achievement) {
-        achievement.matcher.unbind();
+    eventCount(eventId: string): number {
+        return this.eventCountRecorder.eventCount(eventId);
+    }
 
-        const index = this.activeAchievements.indexOf(achievement);
-        if (index >= 0) {
-            this.activeAchievements.splice(index, 1);
+    onEvent(eventId: string): void {
+        this.eventCountRecorder.onEvent(eventId);
+
+        for (const achievement of this.achievements) {
+            achievement.condition.onEventCounted(eventId);
         }
     }
 
     bind(world: World) {
         this.world = world;
 
-        for (const achievement of this.achievements) {
-            this.activeAchievements.push(achievement);
+        for (const counter of this.counters) {
+            counter.bind(world, this.eventCountRecorder);
+        }
 
-            achievement.matcher.bind(world, {
-                unlock: () => {
-                    this.unlocker.unlock();
-                    this.removeActiveAchievement(achievement);
-                },
-                fail: () => {
-                    this.unlocker.fail();
-                    this.removeActiveAchievement(achievement);
-                },
-            }, this.eventCounter);
+        for (const achievement of this.achievements) {
+            achievement.condition.bind(
+                this.eventCountRecorder,
+                this.unlocker,
+                achievement.id,
+            );
         }
     }
 
     postBind() {
-        for (const achievement of this.activeAchievements) {
-            achievement.matcher.postBind();
+        for (const counter of this.counters) {
+            counter.postBind();
+        }
+
+        for (const achievement of this.achievements) {
+            achievement.condition.postBind();
         }
     }
 
     update() {
-        for (const achievement of this.activeAchievements) {
-            achievement.matcher.update();
+        for (const counter of this.counters) {
+            counter.update();
         }
     }
 }
