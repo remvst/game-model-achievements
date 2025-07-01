@@ -14,7 +14,14 @@ export abstract class FailingAchievementCondition extends AchievementCondition {
         eventCounter: EventCounter,
     ) {
         super.bind(world, unlocker, eventCounter);
-        this.original.bind(world, unlocker, eventCounter);
+        this.original.bind(
+            world,
+            {
+                unlock: () => this.unlocker.fail(),
+                fail: () => this.unlocker.fail(),
+            },
+            eventCounter,
+        );
     }
 
     postBind() {
@@ -30,9 +37,5 @@ export abstract class FailingAchievementCondition extends AchievementCondition {
     update() {
         super.update();
         this.original.update();
-    }
-
-    achieve() {
-        this.unlocker.fail();
     }
 }
