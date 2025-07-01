@@ -1,14 +1,11 @@
 import { World } from "@remvst/game-model";
 import {
-    Achievement,
     AchievementUnlocker,
     EventCountAchievementCondition,
-    EventCounter,
-    EventCountRecorder,
-    WorldAchievementWatcher
+    EventCountRecorder
 } from "../src";
 
-describe("WorldAchievementWatcher", () => {
+describe("EventCountAchievementCondition", () => {
     let world: World;
     let unlocker: AchievementUnlocker;
     let eventCountRecorder: EventCountRecorder;
@@ -28,20 +25,6 @@ describe("WorldAchievementWatcher", () => {
     afterEach(() => {
         expect(eventCountRecorder.onEvent).not.toHaveBeenCalled();
     });
-
-    function createWatcher(opts: {
-        counters: EventCounter[];
-        achievements: Achievement[];
-    }) {
-        const watcher = new WorldAchievementWatcher({
-            ...opts,
-            unlocker,
-            eventCountRecorder,
-        });
-        watcher.bind(world);
-        watcher.postBind();
-        return watcher;
-    }
 
     it("will unlock an achievement when the event count reaches the required amount", () => {
         (eventCountRecorder.eventCount as jasmine.Spy).and.returnValue(1);

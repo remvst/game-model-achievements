@@ -14,7 +14,6 @@ export class EventCountAchievementCondition extends AchievementCondition {
         if (eventId !== this.eventId) return;
 
         const count = this.countRecorder.eventCount(eventId);
-        console.log('new count', count);
         if (count >= this.count) {
             this.unlocker.unlock(this.achievementId);
         }
