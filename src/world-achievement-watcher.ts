@@ -6,13 +6,21 @@ import { EventCounter } from "./event-counter";
 export class WorldAchievementWatcher {
     private world: World;
 
+    private readonly achievements: Achievement[];
+    private readonly unlocker: AchievementUnlocker;
+    private readonly eventCounter: EventCounter;
+
     private readonly activeAchievements: Achievement[] = [];
 
-    constructor(
-        private readonly achievements: Achievement[],
-        private readonly unlocker: AchievementUnlocker,
-        private readonly eventCounter: EventCounter,
-    ) {}
+    constructor(opts: {
+        readonly achievements: Achievement[],
+        readonly unlocker: AchievementUnlocker,
+        readonly eventCounter: EventCounter,
+    }) {
+        this.achievements = opts.achievements;
+        this.unlocker = opts.unlocker;
+        this.eventCounter = opts.eventCounter;
+    }
 
     private removeActiveAchievement(achievement: Achievement) {
         achievement.matcher.unbind();
