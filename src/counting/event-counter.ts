@@ -7,27 +7,27 @@ export abstract class EventCounter {
 
     protected world: World;
     protected unlocker: AchievementUnlocker;
-    protected eventCountRecoder: EventCountRecorder;
+    protected eventCountRecorder: EventCountRecorder;
 
     constructor(opts: { eventId: string }) {
         this.eventId = opts.eventId;
     }
 
-    bind(world: World, eventCountRecoder: EventCountRecorder) {
+    bind(world: World, eventCountRecorder: EventCountRecorder) {
         this.world = world;
-        this.eventCountRecoder = eventCountRecoder;
+        this.eventCountRecorder = eventCountRecorder;
     }
 
     postBind() {}
 
     unbind() {
         this.world = null;
-        this.eventCountRecoder = null;
+        this.eventCountRecorder = null;
     }
 
     update() {}
 
     count() {
-        this.eventCountRecoder.onEvent(this.eventId);
+        this.eventCountRecorder.onEvent(this.eventId);
     }
 }

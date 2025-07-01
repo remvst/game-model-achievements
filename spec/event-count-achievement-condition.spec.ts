@@ -2,7 +2,7 @@ import { World } from "@remvst/game-model";
 import {
     AchievementUnlocker,
     EventCountAchievementCondition,
-    EventCountRecorder
+    EventCountRecorder,
 } from "../src";
 
 describe("EventCountAchievementCondition", () => {

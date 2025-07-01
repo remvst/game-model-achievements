@@ -40,15 +40,11 @@ export class WorldAchievementWatcher implements EventCountRecorder {
         this.world = world;
 
         for (const counter of this.counters) {
-            counter.bind(world, this.eventCountRecorder);
+            counter.bind(world, this);
         }
 
         for (const achievement of this.achievements) {
-            achievement.condition.bind(
-                this.eventCountRecorder,
-                this.unlocker,
-                achievement.id,
-            );
+            achievement.condition.bind(this, this.unlocker, achievement.id);
         }
     }
 

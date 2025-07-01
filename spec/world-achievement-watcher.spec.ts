@@ -1,12 +1,10 @@
-import { entity, World, WorldEvent } from "@remvst/game-model";
+import { World, WorldEvent } from "@remvst/game-model";
 import {
     Achievement,
     AchievementUnlocker,
-    EventCountAchievementCondition,
-    EventCounter,
     EventCountRecorder,
+    EventCounter,
     WorldAchievementWatcher,
-    WorldStateCounter,
 } from "../src";
 
 class TestEvent implements WorldEvent {
@@ -54,7 +52,6 @@ describe("WorldAchievementWatcher", () => {
 
     it("can unlock a world state achievement", () => {
         // const can
-
         // const watcher = createWatcher({
         //     counters: [
         //         new WorldStateCounter({
@@ -73,10 +70,8 @@ describe("WorldAchievementWatcher", () => {
         //         }),
         //     ]
         // });
-
         // watcher.update();
         // expect(unlocker.unlock).not.toHaveBeenCalled();
-
         // world.entities.add(entity());
         // watcher.update();
         // expect(unlocker.unlock).toHaveBeenCalledWith("test-achievement");
