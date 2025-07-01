@@ -51,7 +51,7 @@ export class WorldAchievementWatcher {
     }
 
     postBind() {
-        for (const achievement of this.achievements) {
+        for (const achievement of this.activeAchievements) {
             achievement.matcher.postBind();
         }
     }
