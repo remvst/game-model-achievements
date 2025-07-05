@@ -8,7 +8,7 @@ export class WorldAchievementWatcher implements EventCountRecorder {
     private world: World;
 
     private readonly counters: EventCounter[];
-    private readonly achievements: Achievement[];
+    readonly achievements: Achievement[];
     private readonly unlocker: AchievementUnlocker;
     private readonly eventCountRecorder: EventCountRecorder;
 

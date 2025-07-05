@@ -59,4 +59,14 @@ export class MultiAchievementCondition extends AchievementCondition {
             condition.onEventCounted(eventId);
         }
     }
+
+    progress(countRecorder: EventCountRecorder): number | null {
+        let acc = 0;
+        for (const condition of this.conditions) {
+            const progress = condition.progress(countRecorder);
+            if (progress === null) return null;
+            acc += progress / this.conditions.size;
+        }
+        return acc;
+    }
 }

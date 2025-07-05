@@ -31,4 +31,10 @@ export class FailingAchievementCondition extends AchievementCondition {
     onEventCounted(eventId: string): void {
         this.original.onEventCounted(eventId);
     }
+
+    progress(countRecorder: EventCountRecorder): number | null {
+        const progress = this.original.progress(countRecorder);
+        if (progress === null) return null;
+        return 1 - progress;
+    }
 }

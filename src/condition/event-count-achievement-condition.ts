@@ -1,3 +1,4 @@
+import { EventCountRecorder } from "../counting/event-count-recorder";
 import { AchievementCondition } from "./achievement-condition";
 
 export class EventCountAchievementCondition extends AchievementCondition {
@@ -17,5 +18,10 @@ export class EventCountAchievementCondition extends AchievementCondition {
         if (count >= this.count) {
             this.unlocker.unlock(this.achievementId);
         }
+    }
+
+    progress(countRecorder: EventCountRecorder): number | null {
+        const count = countRecorder.eventCount(this.eventId);
+        return count / this.count;
     }
 }

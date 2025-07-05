@@ -18,5 +18,9 @@ export abstract class AchievementCondition {
 
     postBind() {}
 
+    progress(countRecorder: EventCountRecorder): number | null {
+        return null;
+    }
+
     abstract onEventCounted(eventId: string): void;
 }

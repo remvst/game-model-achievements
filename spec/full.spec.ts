@@ -86,9 +86,13 @@ describe("full example", () => {
             ],
         });
 
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(0);
+
         world.addEvent(new Jump());
         expect(unlocker.unlock).toHaveBeenCalledWith("first-jump");
         expect(unlocker.fail).not.toHaveBeenCalled();
+
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(1);
     });
 
     it("can unlock the 5 jumps achievement", () => {
@@ -106,12 +110,19 @@ describe("full example", () => {
             ],
         });
 
-        for (let i = 0; i < 5; i++) {
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(0);
+
+        world.addEvent(new Jump());
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(0.2);
+
+        for (let i = 0; i < 4; i++) {
             world.addEvent(new Jump());
         }
 
         expect(unlocker.unlock).toHaveBeenCalledWith("jump-5-times");
         expect(unlocker.fail).not.toHaveBeenCalled();
+
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(1);
     });
 
     it("can fail the never jump achievement", () => {
@@ -131,10 +142,14 @@ describe("full example", () => {
             ],
         });
 
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(1);
+
         world.addEvent(new Jump());
 
         expect(unlocker.unlock).not.toHaveBeenCalled();
         expect(unlocker.fail).toHaveBeenCalledWith("never-jump");
+
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(0);
     });
 
     it("can unlock the jump and kill achievement", () => {
@@ -158,12 +173,16 @@ describe("full example", () => {
             ],
         });
 
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(0);
+
         world.addEvent(new Jump());
         expect(unlocker.unlock).not.toHaveBeenCalled();
+        expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(0.5);
 
         world.addEvent(new Kill());
 
         expect(unlocker.unlock).toHaveBeenCalledWith("jump-and-kill");
-        expect(unlocker.fail).not.toHaveBeenCalled();
+
+        expect(unlocker.fail).not.toHaveBeenCalled();expect(watcher.achievements[0].condition.progress(eventCountRecorder)).toBe(1);
     });
 });
