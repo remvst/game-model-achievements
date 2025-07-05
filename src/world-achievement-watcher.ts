@@ -7,21 +7,27 @@ import { EventCounter } from "./counting/event-counter";
 export class WorldAchievementWatcher implements EventCountRecorder {
     private world: World;
 
-    private readonly counters: EventCounter[];
-    readonly achievements: Achievement[];
+    private readonly counters: EventCounter[] = [];
+    readonly achievements: Achievement[] = [];
     private readonly unlocker: AchievementUnlocker;
     private readonly eventCountRecorder: EventCountRecorder;
 
     constructor(opts: {
-        readonly counters: EventCounter[];
-        readonly achievements: Achievement[];
         readonly unlocker: AchievementUnlocker;
         readonly eventCountRecorder: EventCountRecorder;
     }) {
-        this.counters = opts.counters;
-        this.achievements = opts.achievements;
         this.unlocker = opts.unlocker;
         this.eventCountRecorder = opts.eventCountRecorder;
+    }
+
+    addEventCounter(counter: EventCounter): this {
+        this.counters.push(counter);
+        return this;
+    }
+
+    addAchievement(achievement: Achievement): this {
+        this.achievements.push(achievement);
+        return this;
     }
 
     eventCount(eventId: string): number {
@@ -34,6 +40,10 @@ export class WorldAchievementWatcher implements EventCountRecorder {
         for (const achievement of this.achievements) {
             achievement.condition.onEventCounted(eventId);
         }
+    }
+
+    reset(eventId: string): void {
+        this.eventCountRecorder.reset(eventId);
     }
 
     bind(world: World) {
