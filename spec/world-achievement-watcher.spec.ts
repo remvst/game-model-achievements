@@ -7,10 +7,6 @@ import {
     WorldAchievementWatcher,
 } from "../src";
 
-class TestEvent implements WorldEvent {
-    apply(world: World): void {}
-}
-
 describe("WorldAchievementWatcher", () => {
     let world: World;
     let unlocker: AchievementUnlocker;
@@ -33,6 +29,7 @@ describe("WorldAchievementWatcher", () => {
                 .and.callFake((id) =>
                     events.set(id, (events.get(id) || 0) + 1),
                 ),
+            reset: jasmine.createSpy("reset"),
         };
     });
 

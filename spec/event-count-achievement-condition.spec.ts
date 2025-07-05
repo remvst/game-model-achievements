@@ -19,6 +19,7 @@ describe("EventCountAchievementCondition", () => {
         eventCountRecorder = {
             eventCount: jasmine.createSpy("eventCount"),
             onEvent: jasmine.createSpy("onEvent"),
+            reset: jasmine.createSpy("reset"),
         };
     });
 
