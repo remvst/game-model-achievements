@@ -5,7 +5,7 @@ export class EventCountAchievementCondition extends AchievementCondition {
     readonly eventId: string;
     readonly count: number;
 
-    constructor(opts: { eventId: string; count: number }) {
+    constructor(opts: { readonly eventId: string; readonly count: number }) {
         super();
         this.eventId = opts.eventId;
         this.count = opts.count;

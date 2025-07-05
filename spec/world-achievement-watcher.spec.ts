@@ -1,4 +1,4 @@
-import { World, WorldEvent } from "@remvst/game-model";
+import { World } from "@remvst/game-model";
 import {
     Achievement,
     AchievementUnlocker,
