@@ -5,11 +5,11 @@ import {
     EventCountAchievementCondition,
     EventCountRecorder,
     EventCounter,
+    FailingAchievementCondition,
     MultiAchievementCondition,
     WorldAchievementWatcher,
     WorldEventCounter,
 } from "../src";
-import { FailingAchievementCondition } from "./../src/condition/failing-achievement-condition";
 
 class Jump implements WorldEvent {
     apply(world: World): void {}
