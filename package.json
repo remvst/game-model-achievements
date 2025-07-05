@@ -9,7 +9,7 @@
     "scripts": {
         "prettier:fix": "prettier . --write",
         "prettier:check": "prettier . --check",
-        "unittest": "ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
+        "unittest": "tsx node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
         "test": "npm run prettier:check && npm run unittest",
         "coverage": "nyc npm test",
         "build": "rm -rf lib && tsc && tsc --project tsconfig.cjs.json",
@@ -28,7 +28,7 @@
         "nyc": "^15.1.0",
         "prettier": "3.1.1",
         "prettier-plugin-organize-imports": "^3.2.4",
-        "ts-node": "^10.9.1",
+        "tsx": "^4.20.3",
         "typescript": "^5.3.3"
     },
     "dependencies": {
