@@ -6,6 +6,7 @@ export * from "./condition/failing-achievement-condition";
 export * from "./condition/multi-achievement-condition";
 export * from "./counting/event-count-recorder";
 export * from "./counting/event-counter";
+export * from "./counting/sequence-event-counter";
 export * from "./counting/world-event-counter";
 export * from "./counting/world-state-counter";
 export * from "./world-achievement-watcher";

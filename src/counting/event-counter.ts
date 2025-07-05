@@ -9,7 +9,7 @@ export abstract class EventCounter {
     protected unlocker: AchievementUnlocker;
     protected eventCountRecorder: EventCountRecorder;
 
-    constructor(opts: { eventId: string }) {
+    constructor(opts: { readonly eventId: string }) {
         this.eventId = opts.eventId;
     }
 

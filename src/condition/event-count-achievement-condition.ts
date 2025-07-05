@@ -28,7 +28,7 @@ export class EventCountAchievementCondition extends AchievementCondition {
 
 export function eventOccurs(
     eventId: string,
-    count: number,
+    count: number = 1,
 ): EventCountAchievementCondition {
     return new EventCountAchievementCondition({ eventId, count });
 }

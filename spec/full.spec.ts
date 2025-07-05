@@ -4,6 +4,7 @@ import {
     AchievementUnlocker,
     EventCountRecorder,
     EventCounter,
+    SequenceEventCounter,
     WorldAchievementWatcher,
     WorldEventCounter,
     eventOccurs,
@@ -45,7 +46,6 @@ describe("full example", () => {
                 .and.callFake((id) =>
                     events.set(id, (events.get(id) || 0) + 1),
                 ),
-            reset: jasmine.createSpy("reset"),
         };
 
         jumpCounter = new WorldEventCounter({
@@ -179,5 +179,42 @@ describe("full example", () => {
         expect(
             watcher.achievements[0].condition.progress(eventCountRecorder),
         ).toBe(1);
+    });
+
+    it("can unlock kill twice without jumping achievement", () => {
+        const sequence = new SequenceEventCounter({
+            eventId: "kill-twice-without-jumping",
+            eventSequence: [killCounter.eventId, killCounter.eventId],
+            resetEvent: jumpCounter.eventId,
+        });
+        watcher.addEventCounter(sequence);
+
+        watcher.addAchievement(
+            new Achievement({
+                id: "kill-twice-without-jumping",
+                label: "Kill twice without jumping",
+                condition: eventOccurs(sequence.eventId, 1),
+            }),
+        );
+        watcher.bind(world);
+        watcher.postBind();
+
+        expect(
+            watcher.achievements[0].condition.progress(eventCountRecorder),
+        ).toBe(0);
+
+        for (const event of [new Kill(), new Jump(), new Kill()]) {
+            world.addEvent(event);
+            watcher.update();
+        }
+
+        expect(unlocker.unlock).not.toHaveBeenCalled();
+
+        world.addEvent(new Kill());
+        watcher.update();
+
+        expect(unlocker.unlock).toHaveBeenCalledWith(
+            "kill-twice-without-jumping",
+        );
     });
 });
