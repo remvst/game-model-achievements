@@ -42,10 +42,6 @@ export class WorldAchievementWatcher implements EventCountRecorder {
         }
     }
 
-    reset(eventId: string): void {
-        this.eventCountRecorder.reset(eventId);
-    }
-
     bind(world: World) {
         this.world = world;
 
