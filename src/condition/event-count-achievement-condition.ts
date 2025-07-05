@@ -25,3 +25,10 @@ export class EventCountAchievementCondition extends AchievementCondition {
         return count / this.count;
     }
 }
+
+export function eventOccurs(
+    eventId: string,
+    count: number,
+): EventCountAchievementCondition {
+    return new EventCountAchievementCondition({ eventId, count });
+}

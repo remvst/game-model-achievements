@@ -70,3 +70,9 @@ export class MultiAchievementCondition extends AchievementCondition {
         return acc;
     }
 }
+
+export function succeedIfAll(
+    ...conditions: AchievementCondition[]
+): MultiAchievementCondition {
+    return new MultiAchievementCondition(conditions);
+}

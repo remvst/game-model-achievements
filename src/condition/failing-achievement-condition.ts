@@ -38,3 +38,9 @@ export class FailingAchievementCondition extends AchievementCondition {
         return 1 - progress;
     }
 }
+
+export function failIf(
+    condition: AchievementCondition,
+): FailingAchievementCondition {
+    return new FailingAchievementCondition(condition);
+}

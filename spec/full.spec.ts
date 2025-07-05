@@ -2,13 +2,13 @@ import { World, WorldEvent } from "@remvst/game-model";
 import {
     Achievement,
     AchievementUnlocker,
-    EventCountAchievementCondition,
     EventCountRecorder,
     EventCounter,
-    FailingAchievementCondition,
-    MultiAchievementCondition,
     WorldAchievementWatcher,
     WorldEventCounter,
+    eventOccurs,
+    failIf,
+    succeedIfAll,
 } from "../src";
 
 class Jump implements WorldEvent {
@@ -71,10 +71,7 @@ describe("full example", () => {
             new Achievement({
                 id: "first-jump",
                 label: "First Jump",
-                condition: new EventCountAchievementCondition({
-                    eventId: jumpCounter.eventId,
-                    count: 1,
-                }),
+                condition: eventOccurs(jumpCounter.eventId, 1),
             }),
         );
         watcher.bind(world);
@@ -98,10 +95,7 @@ describe("full example", () => {
             new Achievement({
                 id: "jump-5-times",
                 label: "First Jump",
-                condition: new EventCountAchievementCondition({
-                    eventId: jumpCounter.eventId,
-                    count: 5,
-                }),
+                condition: eventOccurs(jumpCounter.eventId, 5),
             }),
         );
         watcher.bind(world);
@@ -133,12 +127,7 @@ describe("full example", () => {
             new Achievement({
                 id: "never-jump",
                 label: "Never Jump",
-                condition: new FailingAchievementCondition(
-                    new EventCountAchievementCondition({
-                        eventId: jumpCounter.eventId,
-                        count: 1,
-                    }),
-                ),
+                condition: failIf(eventOccurs(jumpCounter.eventId, 1)),
             }),
         );
         watcher.bind(world);
@@ -163,16 +152,10 @@ describe("full example", () => {
             new Achievement({
                 id: "jump-and-kill",
                 label: "Learn to jump and kill",
-                condition: new MultiAchievementCondition([
-                    new EventCountAchievementCondition({
-                        eventId: jumpCounter.eventId,
-                        count: 1,
-                    }),
-                    new EventCountAchievementCondition({
-                        eventId: killCounter.eventId,
-                        count: 1,
-                    }),
-                ]),
+                condition: succeedIfAll(
+                    eventOccurs(jumpCounter.eventId, 1),
+                    eventOccurs(killCounter.eventId, 1),
+                ),
             }),
         );
         watcher.bind(world);
