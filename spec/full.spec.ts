@@ -12,11 +12,11 @@ import {
 import { FailingAchievementCondition } from "./../src/condition/failing-achievement-condition";
 
 class Jump implements WorldEvent {
-    apply(world: World): void { }
+    apply(world: World): void {}
 }
 
 class Kill implements WorldEvent {
-    apply(world: World): void { }
+    apply(world: World): void {}
 }
 
 describe("full example", () => {
@@ -139,7 +139,7 @@ describe("full example", () => {
                         count: 1,
                     }),
                 ),
-            })
+            }),
         );
         watcher.bind(world);
         watcher.postBind();
@@ -173,7 +173,7 @@ describe("full example", () => {
                         count: 1,
                     }),
                 ]),
-            })
+            }),
         );
         watcher.bind(world);
         watcher.postBind();
