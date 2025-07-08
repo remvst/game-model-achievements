@@ -1,12 +1,10 @@
 import { World } from "@remvst/game-model";
-import { AchievementUnlocker } from "../achievement-unlocker";
 import { EventCountRecorder } from "./event-count-recorder";
 
 export abstract class EventCounter {
     readonly eventId: string;
 
     protected world: World;
-    protected unlocker: AchievementUnlocker;
     protected eventCountRecorder: EventCountRecorder;
 
     constructor(opts: { readonly eventId: string }) {
