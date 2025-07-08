@@ -22,7 +22,7 @@ export class WorldAchievementWatcher implements ValueRecorder {
         this.recorder = opts.recorder;
     }
 
-    addEventCounter(counter: ValueCounter): this {
+    addCounter(counter: ValueCounter): this {
         this.counters.push(counter);
         return this;
     }

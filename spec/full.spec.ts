@@ -9,7 +9,7 @@ import {
     WorldEventCounter,
     failIf,
     succeedIfAll,
-    valueEquals,
+    valueIsEqualOrGreaterThan,
 } from "../src";
 
 class Jump implements WorldEvent {
@@ -61,8 +61,8 @@ describe("full example", () => {
             unlocker,
             recorder,
         })
-            .addEventCounter(jumpCounter)
-            .addEventCounter(killCounter);
+            .addCounter(jumpCounter)
+            .addCounter(killCounter);
     });
 
     it("can unlock the first jump achievement", () => {
@@ -70,7 +70,7 @@ describe("full example", () => {
             new Achievement({
                 id: "first-jump",
                 label: "First Jump",
-                condition: valueEquals(jumpCounter.valueId, 1),
+                condition: valueIsEqualOrGreaterThan(jumpCounter.valueId, 1),
             }),
         );
         watcher.bind(world);
@@ -90,7 +90,7 @@ describe("full example", () => {
             new Achievement({
                 id: "jump-5-times",
                 label: "First Jump",
-                condition: valueEquals(jumpCounter.valueId, 5),
+                condition: valueIsEqualOrGreaterThan(jumpCounter.valueId, 5),
             }),
         );
         watcher.bind(world);
@@ -116,7 +116,7 @@ describe("full example", () => {
             new Achievement({
                 id: "never-jump",
                 label: "Never Jump",
-                condition: failIf(valueEquals(jumpCounter.valueId, 1)),
+                condition: failIf(valueIsEqualOrGreaterThan(jumpCounter.valueId, 1)),
             }),
         );
         watcher.bind(world);
@@ -138,8 +138,8 @@ describe("full example", () => {
                 id: "jump-and-kill",
                 label: "Learn to jump and kill",
                 condition: succeedIfAll(
-                    valueEquals(jumpCounter.valueId, 1),
-                    valueEquals(killCounter.valueId, 1),
+                    valueIsEqualOrGreaterThan(jumpCounter.valueId, 1),
+                    valueIsEqualOrGreaterThan(killCounter.valueId, 1),
                 ),
             }),
         );
@@ -166,13 +166,13 @@ describe("full example", () => {
             eventSequence: [killCounter.valueId, killCounter.valueId],
             resetEvent: jumpCounter.valueId,
         });
-        watcher.addEventCounter(sequence);
+        watcher.addCounter(sequence);
 
         watcher.addAchievement(
             new Achievement({
                 id: "kill-twice-without-jumping",
                 label: "Kill twice without jumping",
-                condition: valueEquals(sequence.valueId, 1),
+                condition: valueIsEqualOrGreaterThan(sequence.valueId, 1),
             }),
         );
         watcher.bind(world);

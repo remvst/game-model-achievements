@@ -25,9 +25,9 @@ export class ValueAchievementCondition extends AchievementCondition {
     }
 }
 
-export function valueEquals(
+export function valueIsEqualOrGreaterThan(
     valueId: string,
-    count: number = 1,
+    count: number,
 ): ValueAchievementCondition {
     return new ValueAchievementCondition({ valueId, count });
 }
