@@ -9,8 +9,10 @@ export class WorldAchievementWatcher implements EventCountRecorder {
 
     private readonly counters: EventCounter[] = [];
     readonly achievements: Achievement[] = [];
-    private readonly unlocker: AchievementUnlocker;
-    private readonly eventCountRecorder: EventCountRecorder;
+
+    // Persistence
+    readonly unlocker: AchievementUnlocker;
+    readonly eventCountRecorder: EventCountRecorder;
 
     constructor(opts: {
         readonly unlocker: AchievementUnlocker;

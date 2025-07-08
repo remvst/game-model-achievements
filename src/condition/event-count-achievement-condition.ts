@@ -1,4 +1,3 @@
-import { EventCountRecorder } from "../counting/event-count-recorder";
 import { AchievementCondition } from "./achievement-condition";
 
 export class EventCountAchievementCondition extends AchievementCondition {

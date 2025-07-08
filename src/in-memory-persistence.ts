@@ -1,7 +1,9 @@
-import { AchievementUnlocker, AchievementStatus } from "./achievement-unlocker";
+import { AchievementStatus, AchievementUnlocker } from "./achievement-unlocker";
 import { EventCountRecorder } from "./counting/event-count-recorder";
 
-export class InMemoryAchievementPersistence implements AchievementUnlocker, EventCountRecorder {
+export class InMemoryAchievementPersistence
+    implements AchievementUnlocker, EventCountRecorder
+{
     private readonly achievementStatuses = new Map<string, AchievementStatus>();
     private readonly eventCounts = new Map<string, number>();
 
@@ -14,7 +16,10 @@ export class InMemoryAchievementPersistence implements AchievementUnlocker, Even
     }
 
     status(achievementId: string): AchievementStatus {
-        return this.achievementStatuses.get(achievementId) || AchievementStatus.IN_PROGRESS;
+        return (
+            this.achievementStatuses.get(achievementId) ||
+            AchievementStatus.IN_PROGRESS
+        );
     }
 
     onEvent(eventId: string): void {
