@@ -2,14 +2,14 @@ import { World, WorldEvent } from "@remvst/game-model";
 import {
     Achievement,
     AchievementUnlocker,
-    EventCountRecorder,
-    EventCounter,
-    SequenceEventCounter,
+    SequenceCounter,
+    ValueCounter,
+    ValueRecorder,
     WorldAchievementWatcher,
     WorldEventCounter,
-    eventOccurs,
     failIf,
     succeedIfAll,
+    valueEquals,
 } from "../src";
 
 class Jump implements WorldEvent {
@@ -23,9 +23,9 @@ class Kill implements WorldEvent {
 describe("full example", () => {
     let world: World;
     let unlocker: AchievementUnlocker;
-    let eventCountRecorder: EventCountRecorder;
-    let jumpCounter: EventCounter;
-    let killCounter: EventCounter;
+    let recorder: ValueRecorder;
+    let jumpCounter: ValueCounter;
+    let killCounter: ValueCounter;
     let watcher: WorldAchievementWatcher;
 
     beforeEach(() => {
@@ -38,28 +38,28 @@ describe("full example", () => {
         };
 
         const events = new Map<string, number>();
-        eventCountRecorder = {
-            eventCount: jasmine
+        recorder = {
+            getValue: jasmine
                 .createSpy("eventCount")
                 .and.callFake((id) => events.get(id) || 0),
-            setEventCount: jasmine
+            setValue: jasmine
                 .createSpy("setEventCount")
                 .and.callFake((id, count) => events.set(id, count)),
         };
 
         jumpCounter = new WorldEventCounter({
-            eventId: "jump",
+            valueId: "jump",
             predicate: (event) => event instanceof Jump,
         });
 
         killCounter = new WorldEventCounter({
-            eventId: "kill",
+            valueId: "kill",
             predicate: (event) => event instanceof Kill,
         });
 
         watcher = new WorldAchievementWatcher({
             unlocker,
-            eventCountRecorder,
+            recorder,
         })
             .addEventCounter(jumpCounter)
             .addEventCounter(killCounter);
@@ -70,23 +70,19 @@ describe("full example", () => {
             new Achievement({
                 id: "first-jump",
                 label: "First Jump",
-                condition: eventOccurs(jumpCounter.eventId, 1),
+                condition: valueEquals(jumpCounter.valueId, 1),
             }),
         );
         watcher.bind(world);
         watcher.postBind();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0);
+        expect(watcher.achievements[0].condition.progress()).toBe(0);
 
         world.addEvent(new Jump());
         expect(unlocker.unlock).toHaveBeenCalledWith("first-jump");
         expect(unlocker.fail).not.toHaveBeenCalled();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(1);
+        expect(watcher.achievements[0].condition.progress()).toBe(1);
     });
 
     it("can unlock the 5 jumps achievement", () => {
@@ -94,20 +90,16 @@ describe("full example", () => {
             new Achievement({
                 id: "jump-5-times",
                 label: "First Jump",
-                condition: eventOccurs(jumpCounter.eventId, 5),
+                condition: valueEquals(jumpCounter.valueId, 5),
             }),
         );
         watcher.bind(world);
         watcher.postBind();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0);
+        expect(watcher.achievements[0].condition.progress()).toBe(0);
 
         world.addEvent(new Jump());
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0.2);
+        expect(watcher.achievements[0].condition.progress()).toBe(0.2);
 
         for (let i = 0; i < 4; i++) {
             world.addEvent(new Jump());
@@ -116,9 +108,7 @@ describe("full example", () => {
         expect(unlocker.unlock).toHaveBeenCalledWith("jump-5-times");
         expect(unlocker.fail).not.toHaveBeenCalled();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(1);
+        expect(watcher.achievements[0].condition.progress()).toBe(1);
     });
 
     it("can fail the never jump achievement", () => {
@@ -126,24 +116,20 @@ describe("full example", () => {
             new Achievement({
                 id: "never-jump",
                 label: "Never Jump",
-                condition: failIf(eventOccurs(jumpCounter.eventId, 1)),
+                condition: failIf(valueEquals(jumpCounter.valueId, 1)),
             }),
         );
         watcher.bind(world);
         watcher.postBind();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(1);
+        expect(watcher.achievements[0].condition.progress()).toBe(1);
 
         world.addEvent(new Jump());
 
         expect(unlocker.unlock).not.toHaveBeenCalled();
         expect(unlocker.fail).toHaveBeenCalledWith("never-jump");
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0);
+        expect(watcher.achievements[0].condition.progress()).toBe(0);
     });
 
     it("can unlock the jump and kill achievement", () => {
@@ -152,39 +138,33 @@ describe("full example", () => {
                 id: "jump-and-kill",
                 label: "Learn to jump and kill",
                 condition: succeedIfAll(
-                    eventOccurs(jumpCounter.eventId, 1),
-                    eventOccurs(killCounter.eventId, 1),
+                    valueEquals(jumpCounter.valueId, 1),
+                    valueEquals(killCounter.valueId, 1),
                 ),
             }),
         );
         watcher.bind(world);
         watcher.postBind();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0);
+        expect(watcher.achievements[0].condition.progress()).toBe(0);
 
         world.addEvent(new Jump());
         expect(unlocker.unlock).not.toHaveBeenCalled();
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0.5);
+        expect(watcher.achievements[0].condition.progress()).toBe(0.5);
 
         world.addEvent(new Kill());
 
         expect(unlocker.unlock).toHaveBeenCalledWith("jump-and-kill");
 
         expect(unlocker.fail).not.toHaveBeenCalled();
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(1);
+        expect(watcher.achievements[0].condition.progress()).toBe(1);
     });
 
     it("can unlock kill twice without jumping achievement", () => {
-        const sequence = new SequenceEventCounter({
-            eventId: "kill-twice-without-jumping",
-            eventSequence: [killCounter.eventId, killCounter.eventId],
-            resetEvent: jumpCounter.eventId,
+        const sequence = new SequenceCounter({
+            valueId: "kill-twice-without-jumping",
+            eventSequence: [killCounter.valueId, killCounter.valueId],
+            resetEvent: jumpCounter.valueId,
         });
         watcher.addEventCounter(sequence);
 
@@ -192,15 +172,13 @@ describe("full example", () => {
             new Achievement({
                 id: "kill-twice-without-jumping",
                 label: "Kill twice without jumping",
-                condition: eventOccurs(sequence.eventId, 1),
+                condition: valueEquals(sequence.valueId, 1),
             }),
         );
         watcher.bind(world);
         watcher.postBind();
 
-        expect(
-            watcher.achievements[0].condition.progress(),
-        ).toBe(0);
+        expect(watcher.achievements[0].condition.progress()).toBe(0);
 
         for (const event of [new Kill(), new Jump(), new Kill()]) {
             world.addEvent(event);

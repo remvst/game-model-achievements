@@ -1,14 +1,14 @@
 import { World } from "@remvst/game-model";
 import {
     AchievementUnlocker,
-    EventCountAchievementCondition,
-    EventCountRecorder,
+    ValueAchievementCondition,
+    ValueRecorder,
 } from "../src";
 
-describe("EventCountAchievementCondition", () => {
+describe("ValueAchievementCondition", () => {
     let world: World;
     let unlocker: AchievementUnlocker;
-    let eventCountRecorder: EventCountRecorder;
+    let eventCountRecorder: ValueRecorder;
 
     beforeEach(() => {
         world = new World();
@@ -18,20 +18,20 @@ describe("EventCountAchievementCondition", () => {
             status: jasmine.createSpy("status"),
         };
         eventCountRecorder = {
-            eventCount: jasmine.createSpy("eventCount"),
-            setEventCount: jasmine.createSpy("setEventCount"),
+            getValue: jasmine.createSpy("eventCount"),
+            setValue: jasmine.createSpy("setEventCount"),
         };
     });
 
     afterEach(() => {
-        expect(eventCountRecorder.setEventCount).not.toHaveBeenCalled();
+        expect(eventCountRecorder.setValue).not.toHaveBeenCalled();
     });
 
     it("will unlock an achievement when the event count reaches the required amount", () => {
-        (eventCountRecorder.eventCount as jasmine.Spy).and.returnValue(1);
+        (eventCountRecorder.getValue as jasmine.Spy).and.returnValue(1);
 
-        const condition = new EventCountAchievementCondition({
-            eventId: "test-event",
+        const condition = new ValueAchievementCondition({
+            valueId: "test-event",
             count: 1,
         });
         condition.bind(eventCountRecorder, unlocker, "test-achievement");
@@ -42,10 +42,10 @@ describe("EventCountAchievementCondition", () => {
     });
 
     it("will not unlock an achievement if the count isn't reached", () => {
-        (eventCountRecorder.eventCount as jasmine.Spy).and.returnValue(1);
+        (eventCountRecorder.getValue as jasmine.Spy).and.returnValue(1);
 
-        const condition = new EventCountAchievementCondition({
-            eventId: "test-event",
+        const condition = new ValueAchievementCondition({
+            valueId: "test-event",
             count: 2,
         });
         condition.bind(eventCountRecorder, unlocker, "test-achievement");
@@ -56,10 +56,10 @@ describe("EventCountAchievementCondition", () => {
     });
 
     it("will not unlock an achievement when the event is unrelated", () => {
-        (eventCountRecorder.eventCount as jasmine.Spy).and.returnValue(1);
+        (eventCountRecorder.getValue as jasmine.Spy).and.returnValue(1);
 
-        const condition = new EventCountAchievementCondition({
-            eventId: "test-event",
+        const condition = new ValueAchievementCondition({
+            valueId: "test-event",
             count: 1,
         });
         condition.bind(eventCountRecorder, unlocker, "test-achievement");

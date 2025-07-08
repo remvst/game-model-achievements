@@ -1,5 +1,5 @@
 import { AchievementUnlocker } from "../achievement-unlocker";
-import { EventCountRecorder } from "../counting/event-count-recorder";
+import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementCondition } from "./achievement-condition";
 
 export class MultiAchievementCondition extends AchievementCondition {
@@ -13,7 +13,7 @@ export class MultiAchievementCondition extends AchievementCondition {
     }
 
     bind(
-        countRecorder: EventCountRecorder,
+        countRecorder: ValueRecorder,
         unlocker: AchievementUnlocker,
         achievementId: string,
     ): void {
@@ -55,9 +55,9 @@ export class MultiAchievementCondition extends AchievementCondition {
         this.succeeded.clear();
     }
 
-    onEventCounted(eventId: string): void {
+    onEventCounted(valueId: string): void {
         for (const condition of this.conditions) {
-            condition.onEventCounted(eventId);
+            condition.onEventCounted(valueId);
         }
     }
 

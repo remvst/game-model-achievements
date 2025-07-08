@@ -1,13 +1,13 @@
 import { AchievementUnlocker } from "../achievement-unlocker";
-import { EventCountRecorder } from "../counting/event-count-recorder";
+import { ValueRecorder } from "../persistence/value-recorder";
 
 export abstract class AchievementCondition {
-    protected countRecorder: EventCountRecorder;
+    protected countRecorder: ValueRecorder;
     protected unlocker: AchievementUnlocker;
     protected achievementId: string;
 
     bind(
-        countRecorder: EventCountRecorder,
+        countRecorder: ValueRecorder,
         unlocker: AchievementUnlocker,
         achievementId: string,
     ): void {
@@ -22,5 +22,5 @@ export abstract class AchievementCondition {
         return null;
     }
 
-    abstract onEventCounted(eventId: string): void;
+    abstract onEventCounted(valueId: string): void;
 }

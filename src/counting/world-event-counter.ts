@@ -1,20 +1,20 @@
 import { WorldEvent } from "@remvst/game-model";
 import { filter, Subscription } from "rxjs";
-import { EventCounter } from "./event-counter";
+import { ValueCounter } from "./value-counter";
 
 export type WorldEventPredicate = (event: WorldEvent) => boolean;
 
-export class WorldEventCounter extends EventCounter {
+export class WorldEventCounter extends ValueCounter {
     readonly predicate: WorldEventPredicate;
     readonly eventCount: number;
 
     private eventSubscription: Subscription;
 
     constructor(opts: {
-        readonly eventId: string;
+        readonly valueId: string;
         readonly predicate: WorldEventPredicate;
     }) {
-        super({ eventId: opts.eventId });
+        super({ valueId: opts.valueId });
         this.predicate = opts.predicate;
     }
 

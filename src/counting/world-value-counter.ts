@@ -1,22 +1,22 @@
 import { World } from "@remvst/game-model";
-import { EventCounter } from "./event-counter";
+import { ValueCounter } from "./value-counter";
 
 export type ComputeValue = (world: World) => number;
 
-export class ValueCounter extends EventCounter {
+export class WorldValueCounter extends ValueCounter {
     readonly computeValue: ComputeValue;
     readonly eventCount: number;
 
     constructor(opts: {
-        readonly eventId: string;
+        readonly valueId: string;
         readonly computeValue: ComputeValue;
     }) {
-        super({ eventId: opts.eventId });
+        super({ valueId: opts.valueId });
         this.computeValue = opts.computeValue;
     }
 
     update(): void {
         const value = this.computeValue(this.world);
-        this.eventCountRecorder.setEventCount(this.eventId, value);
+        this.eventCountRecorder.setValue(this.valueId, value);
     }
 }

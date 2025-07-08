@@ -1,5 +1,5 @@
 import { AchievementUnlocker } from "../achievement-unlocker";
-import { EventCountRecorder } from "../counting/event-count-recorder";
+import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementCondition } from "./achievement-condition";
 
 export class FailingAchievementCondition extends AchievementCondition {
@@ -8,7 +8,7 @@ export class FailingAchievementCondition extends AchievementCondition {
     }
 
     bind(
-        countRecorder: EventCountRecorder,
+        countRecorder: ValueRecorder,
         unlocker: AchievementUnlocker,
         achievementId: string,
     ): void {
@@ -29,8 +29,8 @@ export class FailingAchievementCondition extends AchievementCondition {
         this.original.postBind();
     }
 
-    onEventCounted(eventId: string): void {
-        this.original.onEventCounted(eventId);
+    onEventCounted(valueId: string): void {
+        this.original.onEventCounted(valueId);
     }
 
     progress(): number | null {

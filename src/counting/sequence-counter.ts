@@ -1,6 +1,6 @@
-import { EventCounter } from "./event-counter";
+import { ValueCounter } from "./value-counter";
 
-export class SequenceEventCounter extends EventCounter {
+export class SequenceCounter extends ValueCounter {
     private readonly eventSequence: string[];
     private readonly resetEvent: string;
 
@@ -9,21 +9,21 @@ export class SequenceEventCounter extends EventCounter {
     private resetEventCount = 0;
 
     constructor(opts: {
-        readonly eventId: string;
+        readonly valueId: string;
         readonly eventSequence: string[];
         readonly resetEvent: string;
     }) {
-        super({ eventId: opts.eventId });
+        super({ valueId: opts.valueId });
         this.eventSequence = opts.eventSequence;
         this.resetEvent = opts.resetEvent;
     }
 
     private resetSequence() {
         this.currentEventIndex = 0;
-        this.expectedEventCount = this.eventCountRecorder.eventCount(
+        this.expectedEventCount = this.eventCountRecorder.getValue(
             this.eventSequence[0],
         );
-        this.resetEventCount = this.eventCountRecorder.eventCount(
+        this.resetEventCount = this.eventCountRecorder.getValue(
             this.resetEvent,
         );
     }
@@ -36,33 +36,33 @@ export class SequenceEventCounter extends EventCounter {
     update(): void {
         super.update();
 
-        const currentResetCount = this.eventCountRecorder.eventCount(
+        const currentResetCount = this.eventCountRecorder.getValue(
             this.resetEvent,
         );
         if (currentResetCount > this.resetEventCount) {
             this.resetSequence();
         }
 
-        const { expectedEventId } = this;
-        if (!expectedEventId) return;
+        const { expectedvalueId } = this;
+        if (!expectedvalueId) return;
 
         const currentEventCount =
-            this.eventCountRecorder.eventCount(expectedEventId);
+            this.eventCountRecorder.getValue(expectedvalueId);
         if (currentEventCount > this.expectedEventCount) {
             this.currentEventIndex++;
 
-            const nextExpectedEventId =
+            const nextExpectedvalueId =
                 this.eventSequence[this.currentEventIndex];
-            if (nextExpectedEventId) {
+            if (nextExpectedvalueId) {
                 this.expectedEventCount =
-                    this.eventCountRecorder.eventCount(nextExpectedEventId);
+                    this.eventCountRecorder.getValue(nextExpectedvalueId);
             } else {
                 this.incr(1);
             }
         }
     }
 
-    private get expectedEventId(): string | undefined {
+    private get expectedvalueId(): string | undefined {
         return this.eventSequence[this.currentEventIndex];
     }
 }

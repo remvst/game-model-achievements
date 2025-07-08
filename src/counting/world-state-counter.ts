@@ -1,19 +1,19 @@
 import { World } from "@remvst/game-model";
-import { EventCounter } from "./event-counter";
+import { ValueCounter } from "./value-counter";
 
 export type WorldStatePredicate = (world: World) => boolean;
 
-export class WorldStateCounter extends EventCounter {
+export class WorldStateCounter extends ValueCounter {
     readonly predicate: WorldStatePredicate;
     readonly eventCount: number;
 
     private inState = false;
 
     constructor(opts: {
-        readonly eventId: string;
+        readonly valueId: string;
         readonly predicate: WorldStatePredicate;
     }) {
-        super({ eventId: opts.eventId });
+        super({ valueId: opts.valueId });
         this.predicate = opts.predicate;
     }
 

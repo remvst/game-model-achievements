@@ -1,28 +1,28 @@
 import { World } from "@remvst/game-model";
 import { AchievementUnlocker } from "./achievement-unlocker";
 import { Achievement } from "./achievement/achievement";
-import { EventCountRecorder } from "./counting/event-count-recorder";
-import { EventCounter } from "./counting/event-counter";
+import { ValueCounter } from "./counting/value-counter";
+import { ValueRecorder } from "./persistence/value-recorder";
 
-export class WorldAchievementWatcher implements EventCountRecorder {
+export class WorldAchievementWatcher implements ValueRecorder {
     private world: World;
 
-    private readonly counters: EventCounter[] = [];
+    private readonly counters: ValueCounter[] = [];
     readonly achievements: Achievement[] = [];
 
     // Persistence
     readonly unlocker: AchievementUnlocker;
-    readonly eventCountRecorder: EventCountRecorder;
+    readonly recorder: ValueRecorder;
 
     constructor(opts: {
         readonly unlocker: AchievementUnlocker;
-        readonly eventCountRecorder: EventCountRecorder;
+        readonly recorder: ValueRecorder;
     }) {
         this.unlocker = opts.unlocker;
-        this.eventCountRecorder = opts.eventCountRecorder;
+        this.recorder = opts.recorder;
     }
 
-    addEventCounter(counter: EventCounter): this {
+    addEventCounter(counter: ValueCounter): this {
         this.counters.push(counter);
         return this;
     }
@@ -32,15 +32,15 @@ export class WorldAchievementWatcher implements EventCountRecorder {
         return this;
     }
 
-    eventCount(eventId: string): number {
-        return this.eventCountRecorder.eventCount(eventId);
+    getValue(valueId: string): number {
+        return this.recorder.getValue(valueId);
     }
 
-    setEventCount(eventId: string, count: number): void {
-        this.eventCountRecorder.setEventCount(eventId, count);
+    setValue(valueId: string, count: number): void {
+        this.recorder.setValue(valueId, count);
 
         for (const achievement of this.achievements) {
-            achievement.condition.onEventCounted(eventId);
+            achievement.condition.onEventCounted(valueId);
         }
     }
 
