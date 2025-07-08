@@ -1,3 +1,4 @@
+import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
 
 export class ValueAchievementCondition extends AchievementCondition {
@@ -19,9 +20,11 @@ export class ValueAchievementCondition extends AchievementCondition {
         }
     }
 
-    progress(): number | null {
-        const count = this.countRecorder.getValue(this.valueId);
-        return count / this.count;
+    progress(): AchievementProgress | null {
+        return {
+            current: this.countRecorder.getValue(this.valueId),
+            target: this.count,
+        };
     }
 }
 

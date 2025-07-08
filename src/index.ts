@@ -10,5 +10,6 @@ export * from "./counting/world-event-counter";
 export * from "./counting/world-state-counter";
 export * from "./counting/world-value-counter";
 export * from "./in-memory-persistence";
+export * from "./model";
 export * from "./persistence/value-recorder";
 export * from "./world-achievement-watcher";

@@ -1,5 +1,6 @@
 import { AchievementUnlocker } from "../achievement-unlocker";
 import { ValueRecorder } from "../persistence/value-recorder";
+import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
 
 export class MultiAchievementCondition extends AchievementCondition {
@@ -61,12 +62,16 @@ export class MultiAchievementCondition extends AchievementCondition {
         }
     }
 
-    progress(): number | null {
-        let acc = 0;
+    progress(): AchievementProgress | null {
+        const acc = {
+            current: 0,
+            target: 0,
+        };
         for (const condition of this.conditions) {
             const progress = condition.progress();
             if (progress === null) return null;
-            acc += progress / this.conditions.size;
+            acc.current += progress.current;
+            acc.target += progress.target;
         }
         return acc;
     }

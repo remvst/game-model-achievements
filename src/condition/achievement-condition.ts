@@ -1,5 +1,6 @@
 import { AchievementUnlocker } from "../achievement-unlocker";
 import { ValueRecorder } from "../persistence/value-recorder";
+import { AchievementProgress } from "../progress";
 
 export abstract class AchievementCondition {
     protected countRecorder: ValueRecorder;
@@ -18,7 +19,7 @@ export abstract class AchievementCondition {
 
     postBind() {}
 
-    progress(): number | null {
+    progress(): AchievementProgress | null {
         return null;
     }
 

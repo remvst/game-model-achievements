@@ -1,4 +1,4 @@
-export type ValueId = string;
+import { ValueId } from "../model";
 
 export interface ValueRecorder {
     getValue(valueId: ValueId): number;

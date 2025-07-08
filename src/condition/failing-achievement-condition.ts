@@ -1,5 +1,6 @@
 import { AchievementUnlocker } from "../achievement-unlocker";
 import { ValueRecorder } from "../persistence/value-recorder";
+import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
 
 export class FailingAchievementCondition extends AchievementCondition {
@@ -33,10 +34,11 @@ export class FailingAchievementCondition extends AchievementCondition {
         this.original.onEventCounted(valueId);
     }
 
-    progress(): number | null {
+    progress(): AchievementProgress | null {
         const progress = this.original.progress();
         if (progress === null) return null;
-        return 1 - progress;
+        progress.current = progress.target - progress.current;
+        return progress;
     }
 }
 
