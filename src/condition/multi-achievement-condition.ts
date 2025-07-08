@@ -37,6 +37,7 @@ export class MultiAchievementCondition extends AchievementCondition {
                         this.failed.add(condition);
                         unlocker.fail(this.achievementId);
                     },
+                    status: () => unlocker.status(this.achievementId),
                 },
                 achievementId,
             );

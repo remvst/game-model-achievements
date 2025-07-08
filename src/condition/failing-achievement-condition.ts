@@ -18,6 +18,7 @@ export class FailingAchievementCondition extends AchievementCondition {
             {
                 unlock: () => this.unlocker.fail(this.achievementId),
                 fail: () => {},
+                status: () => this.unlocker.status(this.achievementId),
             },
             achievementId,
         );
