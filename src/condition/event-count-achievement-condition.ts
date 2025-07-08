@@ -20,8 +20,8 @@ export class EventCountAchievementCondition extends AchievementCondition {
         }
     }
 
-    progress(countRecorder: EventCountRecorder): number | null {
-        const count = countRecorder.eventCount(this.eventId);
+    progress(): number | null {
+        const count = this.countRecorder.eventCount(this.eventId);
         return count / this.count;
     }
 }

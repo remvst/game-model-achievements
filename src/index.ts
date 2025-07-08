@@ -10,3 +10,4 @@ export * from "./counting/sequence-event-counter";
 export * from "./counting/world-event-counter";
 export * from "./counting/world-state-counter";
 export * from "./world-achievement-watcher";
+export * from "./in-memory-persistence";

@@ -18,7 +18,7 @@ export abstract class AchievementCondition {
 
     postBind() {}
 
-    progress(countRecorder: EventCountRecorder): number | null {
+    progress(): number | null {
         return null;
     }
 
