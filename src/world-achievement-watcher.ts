@@ -7,7 +7,7 @@ import { ValueRecorder } from "./persistence/value-recorder";
 export class WorldAchievementWatcher implements ValueRecorder {
     private world: World;
 
-    private readonly counters: ValueCounter[] = [];
+    private readonly counters = new Map<string, ValueCounter>();
     readonly achievements: Achievement[] = [];
 
     // Persistence
@@ -23,7 +23,7 @@ export class WorldAchievementWatcher implements ValueRecorder {
     }
 
     addCounter(counter: ValueCounter): this {
-        this.counters.push(counter);
+        this.counters.set(counter.valueId, counter);
         return this;
     }
 
@@ -47,7 +47,7 @@ export class WorldAchievementWatcher implements ValueRecorder {
     bind(world: World) {
         this.world = world;
 
-        for (const counter of this.counters) {
+        for (const counter of this.counters.values()) {
             counter.bind(world, this);
         }
 
@@ -57,7 +57,7 @@ export class WorldAchievementWatcher implements ValueRecorder {
     }
 
     postBind() {
-        for (const counter of this.counters) {
+        for (const counter of this.counters.values()) {
             counter.postBind();
         }
 
@@ -67,7 +67,7 @@ export class WorldAchievementWatcher implements ValueRecorder {
     }
 
     update() {
-        for (const counter of this.counters) {
+        for (const counter of this.counters.values()) {
             counter.update();
         }
     }

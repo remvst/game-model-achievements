@@ -116,7 +116,9 @@ describe("full example", () => {
             new Achievement({
                 id: "never-jump",
                 label: "Never Jump",
-                condition: failIf(valueIsEqualOrGreaterThan(jumpCounter.valueId, 1)),
+                condition: failIf(
+                    valueIsEqualOrGreaterThan(jumpCounter.valueId, 1),
+                ),
             }),
         );
         watcher.bind(world);
