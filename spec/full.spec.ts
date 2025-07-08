@@ -34,6 +34,7 @@ describe("full example", () => {
         unlocker = {
             unlock: jasmine.createSpy("unlock"),
             fail: jasmine.createSpy("fail"),
+            status: jasmine.createSpy("status"),
         };
 
         const events = new Map<string, number>();
@@ -41,11 +42,9 @@ describe("full example", () => {
             eventCount: jasmine
                 .createSpy("eventCount")
                 .and.callFake((id) => events.get(id) || 0),
-            onEvent: jasmine
-                .createSpy("onEvent")
-                .and.callFake((id) =>
-                    events.set(id, (events.get(id) || 0) + 1),
-                ),
+            setEventCount: jasmine
+                .createSpy("setEventCount")
+                .and.callFake((id, count) => events.set(id, count)),
         };
 
         jumpCounter = new WorldEventCounter({
@@ -78,7 +77,7 @@ describe("full example", () => {
         watcher.postBind();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0);
 
         world.addEvent(new Jump());
@@ -86,7 +85,7 @@ describe("full example", () => {
         expect(unlocker.fail).not.toHaveBeenCalled();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(1);
     });
 
@@ -102,12 +101,12 @@ describe("full example", () => {
         watcher.postBind();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0);
 
         world.addEvent(new Jump());
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0.2);
 
         for (let i = 0; i < 4; i++) {
@@ -118,7 +117,7 @@ describe("full example", () => {
         expect(unlocker.fail).not.toHaveBeenCalled();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(1);
     });
 
@@ -134,7 +133,7 @@ describe("full example", () => {
         watcher.postBind();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(1);
 
         world.addEvent(new Jump());
@@ -143,7 +142,7 @@ describe("full example", () => {
         expect(unlocker.fail).toHaveBeenCalledWith("never-jump");
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0);
     });
 
@@ -162,13 +161,13 @@ describe("full example", () => {
         watcher.postBind();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0);
 
         world.addEvent(new Jump());
         expect(unlocker.unlock).not.toHaveBeenCalled();
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0.5);
 
         world.addEvent(new Kill());
@@ -177,7 +176,7 @@ describe("full example", () => {
 
         expect(unlocker.fail).not.toHaveBeenCalled();
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(1);
     });
 
@@ -200,7 +199,7 @@ describe("full example", () => {
         watcher.postBind();
 
         expect(
-            watcher.achievements[0].condition.progress(eventCountRecorder),
+            watcher.achievements[0].condition.progress(),
         ).toBe(0);
 
         for (const event of [new Kill(), new Jump(), new Kill()]) {

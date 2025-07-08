@@ -9,7 +9,10 @@ export class WorldStateCounter extends EventCounter {
 
     private inState = false;
 
-    constructor(opts: { eventId: string; predicate: WorldStatePredicate }) {
+    constructor(opts: {
+        readonly eventId: string;
+        readonly predicate: WorldStatePredicate;
+    }) {
         super({ eventId: opts.eventId });
         this.predicate = opts.predicate;
     }
@@ -24,7 +27,7 @@ export class WorldStateCounter extends EventCounter {
         if (inState === this.inState) return;
 
         if (inState) {
-            this.count();
+            this.incr(1);
         }
 
         this.inState = inState;

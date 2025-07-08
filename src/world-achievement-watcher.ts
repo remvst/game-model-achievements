@@ -36,8 +36,8 @@ export class WorldAchievementWatcher implements EventCountRecorder {
         return this.eventCountRecorder.eventCount(eventId);
     }
 
-    onEvent(eventId: string): void {
-        this.eventCountRecorder.onEvent(eventId);
+    setEventCount(eventId: string, count: number): void {
+        this.eventCountRecorder.setEventCount(eventId, count);
 
         for (const achievement of this.achievements) {
             achievement.condition.onEventCounted(eventId);

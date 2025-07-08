@@ -22,8 +22,15 @@ export class InMemoryAchievementPersistence
         );
     }
 
-    onEvent(eventId: string): void {
-        this.eventCounts.set(eventId, (this.eventCounts.get(eventId) || 0) + 1);
+    setEventCount(eventId: string, count: number): void {
+        this.eventCounts.set(eventId, count);
+    }
+
+    incrEvent(eventId: string, amount: number): void {
+        this.eventCounts.set(
+            eventId,
+            (this.eventCounts.get(eventId) || 0) + amount,
+        );
     }
 
     eventCount(eventId: string): number {

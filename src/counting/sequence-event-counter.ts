@@ -57,7 +57,7 @@ export class SequenceEventCounter extends EventCounter {
                 this.expectedEventCount =
                     this.eventCountRecorder.eventCount(nextExpectedEventId);
             } else {
-                this.count();
+                this.incr(1);
             }
         }
     }

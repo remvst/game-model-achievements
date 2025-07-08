@@ -25,7 +25,10 @@ export abstract class EventCounter {
 
     update() {}
 
-    count() {
-        this.eventCountRecorder.onEvent(this.eventId);
+    incr(amount: number) {
+        this.eventCountRecorder.setEventCount(
+            this.eventId,
+            this.eventCountRecorder.eventCount(this.eventId) + amount,
+        );
     }
 }

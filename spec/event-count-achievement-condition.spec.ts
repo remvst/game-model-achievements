@@ -15,15 +15,16 @@ describe("EventCountAchievementCondition", () => {
         unlocker = {
             unlock: jasmine.createSpy("unlock"),
             fail: jasmine.createSpy("fail"),
+            status: jasmine.createSpy("status"),
         };
         eventCountRecorder = {
             eventCount: jasmine.createSpy("eventCount"),
-            onEvent: jasmine.createSpy("onEvent"),
+            setEventCount: jasmine.createSpy("setEventCount"),
         };
     });
 
     afterEach(() => {
-        expect(eventCountRecorder.onEvent).not.toHaveBeenCalled();
+        expect(eventCountRecorder.setEventCount).not.toHaveBeenCalled();
     });
 
     it("will unlock an achievement when the event count reaches the required amount", () => {

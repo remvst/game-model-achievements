@@ -10,7 +10,10 @@ export class WorldEventCounter extends EventCounter {
 
     private eventSubscription: Subscription;
 
-    constructor(opts: { eventId: string; predicate: WorldEventPredicate }) {
+    constructor(opts: {
+        readonly eventId: string;
+        readonly predicate: WorldEventPredicate;
+    }) {
         super({ eventId: opts.eventId });
         this.predicate = opts.predicate;
     }
@@ -18,7 +21,7 @@ export class WorldEventCounter extends EventCounter {
     postBind(): void {
         this.eventSubscription = this.world.events
             .pipe(filter((event) => this.predicate(event)))
-            .subscribe(() => this.count());
+            .subscribe(() => this.incr(1));
     }
 
     unbind(): void {

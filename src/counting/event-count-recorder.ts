@@ -1,4 +1,4 @@
 export interface EventCountRecorder {
     eventCount(eventId: string): number;
-    onEvent(eventId: string): void;
+    setEventCount(eventId: string, count: number): void;
 }
