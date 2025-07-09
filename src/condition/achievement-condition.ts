@@ -1,6 +1,6 @@
+import { AchievementProgress } from "../model";
 import { AchievementStatusRecorder } from "../persistence/achievement-status-recorder";
 import { ValueRecorder } from "../persistence/value-recorder";
-import { AchievementProgress } from "../progress";
 
 export abstract class AchievementCondition {
     protected countRecorder: ValueRecorder;

@@ -12,3 +12,8 @@ export enum AchievementStatus {
     UNLOCKED = "unlocked",
     FAILED = "failed",
 }
+
+export interface AchievementProgress {
+    current: number;
+    target: number;
+}

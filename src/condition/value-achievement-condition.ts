@@ -1,5 +1,4 @@
-import { AchievementStatus } from "../model";
-import { AchievementProgress } from "../progress";
+import { AchievementProgress, AchievementStatus } from "../model";
 import { AchievementCondition } from "./achievement-condition";
 
 export class ValueAchievementCondition extends AchievementCondition {

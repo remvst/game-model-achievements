@@ -1,7 +1,6 @@
-import { AchievementStatus } from "../model";
+import { AchievementProgress, AchievementStatus } from "../model";
 import { AchievementStatusRecorder } from "../persistence/achievement-status-recorder";
 import { ValueRecorder } from "../persistence/value-recorder";
-import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
 
 export class MultiAchievementCondition extends AchievementCondition {
