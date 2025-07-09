@@ -1,7 +1,7 @@
 import { World } from "@remvst/game-model";
-import { AchievementUnlocker } from "./persistence/achievement-unlocker";
 import { Achievement } from "./achievement/achievement";
 import { ValueCounter } from "./counting/value-counter";
+import { AchievementStatusRecorder } from "./persistence/achievement-status-recorder";
 import { ValueRecorder } from "./persistence/value-recorder";
 
 export class WorldAchievementWatcher implements ValueRecorder {
@@ -11,14 +11,14 @@ export class WorldAchievementWatcher implements ValueRecorder {
     readonly achievements: Achievement[] = [];
 
     // Persistence
-    readonly unlocker: AchievementUnlocker;
+    readonly achievementStatusRecorder: AchievementStatusRecorder;
     readonly recorder: ValueRecorder;
 
     constructor(opts: {
-        readonly unlocker: AchievementUnlocker;
+        readonly achievementStatusRecorder: AchievementStatusRecorder;
         readonly recorder: ValueRecorder;
     }) {
-        this.unlocker = opts.unlocker;
+        this.achievementStatusRecorder = opts.achievementStatusRecorder;
         this.recorder = opts.recorder;
     }
 
@@ -52,7 +52,11 @@ export class WorldAchievementWatcher implements ValueRecorder {
         }
 
         for (const achievement of this.achievements) {
-            achievement.condition.bind(this, this.unlocker, achievement.id);
+            achievement.condition.bind(
+                this,
+                this.achievementStatusRecorder,
+                achievement.id,
+            );
         }
     }
 

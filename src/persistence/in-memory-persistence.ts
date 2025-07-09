@@ -1,19 +1,15 @@
-import { AchievementId } from "../model";
-import { AchievementStatus, AchievementUnlocker } from "./achievement-unlocker";
+import { AchievementId, AchievementStatus } from "../model";
+import { AchievementStatusRecorder } from "./achievement-status-recorder";
 import { ValueRecorder } from "./value-recorder";
 
 export class InMemoryAchievementPersistence
-    implements AchievementUnlocker, ValueRecorder
+    implements AchievementStatusRecorder, ValueRecorder
 {
     private readonly statuses = new Map<string, AchievementStatus>();
     private readonly values = new Map<string, number>();
 
-    unlock(achievementId: AchievementId): void {
-        this.statuses.set(achievementId, AchievementStatus.UNLOCKED);
-    }
-
-    fail(achievementId: AchievementId): void {
-        this.statuses.set(achievementId, AchievementStatus.FAILED);
+    setStatus(achievementId: AchievementId, status: AchievementStatus): void {
+        this.statuses.set(achievementId, status);
     }
 
     status(achievementId: AchievementId): AchievementStatus {

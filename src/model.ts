@@ -6,3 +6,9 @@ export enum ValueType {
 }
 
 export type AchievementId = string;
+
+export enum AchievementStatus {
+    IN_PROGRESS = "in_progress",
+    UNLOCKED = "unlocked",
+    FAILED = "failed",
+}

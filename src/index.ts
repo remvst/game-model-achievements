@@ -1,4 +1,3 @@
-export * from "./persistence/achievement-unlocker";
 export * from "./achievement/achievement";
 export * from "./condition/achievement-condition";
 export * from "./condition/failing-achievement-condition";
@@ -9,7 +8,8 @@ export * from "./counting/value-counter";
 export * from "./counting/world-event-counter";
 export * from "./counting/world-state-counter";
 export * from "./counting/world-value-counter";
-export * from "./persistence/in-memory-persistence";
 export * from "./model";
+export * from "./persistence/achievement-status-recorder";
+export * from "./persistence/in-memory-persistence";
 export * from "./persistence/value-recorder";
 export * from "./world-achievement-watcher";

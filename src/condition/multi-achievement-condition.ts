@@ -1,4 +1,5 @@
-import { AchievementUnlocker } from "../persistence/achievement-unlocker";
+import { AchievementStatus } from "../model";
+import { AchievementStatusRecorder } from "../persistence/achievement-status-recorder";
 import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
@@ -15,30 +16,38 @@ export class MultiAchievementCondition extends AchievementCondition {
 
     bind(
         countRecorder: ValueRecorder,
-        unlocker: AchievementUnlocker,
+        achievementStatusRecorder: AchievementStatusRecorder,
         achievementId: string,
     ): void {
-        super.bind(countRecorder, unlocker, achievementId);
+        super.bind(countRecorder, achievementStatusRecorder, achievementId);
 
         for (const condition of this.conditions) {
             condition.bind(
                 countRecorder,
                 {
-                    unlock: () => {
-                        this.succeeded.add(condition);
+                    setStatus: (_, status) => {
+                        if (status === AchievementStatus.UNLOCKED) {
+                            this.succeeded.add(condition);
 
-                        if (
-                            this.succeeded.size === this.conditions.size &&
-                            this.failed.size === 0
-                        ) {
-                            unlocker.unlock(this.achievementId);
+                            if (
+                                this.succeeded.size === this.conditions.size &&
+                                this.failed.size === 0
+                            ) {
+                                achievementStatusRecorder.setStatus(
+                                    this.achievementId,
+                                    AchievementStatus.UNLOCKED,
+                                );
+                            }
+                        } else if (status === AchievementStatus.FAILED) {
+                            this.failed.add(condition);
+                            achievementStatusRecorder.setStatus(
+                                this.achievementId,
+                                AchievementStatus.FAILED,
+                            );
                         }
                     },
-                    fail: () => {
-                        this.failed.add(condition);
-                        unlocker.fail(this.achievementId);
-                    },
-                    status: () => unlocker.status(this.achievementId),
+                    status: () =>
+                        achievementStatusRecorder.status(this.achievementId),
                 },
                 achievementId,
             );

@@ -1,20 +1,20 @@
 import { World } from "@remvst/game-model";
 import {
-    AchievementUnlocker,
+    AchievementStatus,
+    AchievementStatusRecorder,
     ValueAchievementCondition,
     ValueRecorder,
 } from "../src";
 
 describe("ValueAchievementCondition", () => {
     let world: World;
-    let unlocker: AchievementUnlocker;
+    let achievementStatusRecorder: AchievementStatusRecorder;
     let eventCountRecorder: ValueRecorder;
 
     beforeEach(() => {
         world = new World();
-        unlocker = {
-            unlock: jasmine.createSpy("unlock"),
-            fail: jasmine.createSpy("fail"),
+        achievementStatusRecorder = {
+            setStatus: jasmine.createSpy("setStatus"),
             status: jasmine.createSpy("status"),
         };
         eventCountRecorder = {
@@ -34,11 +34,18 @@ describe("ValueAchievementCondition", () => {
             valueId: "test-event",
             count: 1,
         });
-        condition.bind(eventCountRecorder, unlocker, "test-achievement");
+        condition.bind(
+            eventCountRecorder,
+            achievementStatusRecorder,
+            "test-achievement",
+        );
         condition.postBind();
         condition.onEventCounted("test-event");
 
-        expect(unlocker.unlock).toHaveBeenCalledWith("test-achievement");
+        expect(achievementStatusRecorder.setStatus).toHaveBeenCalledWith(
+            "test-achievement",
+            AchievementStatus.UNLOCKED,
+        );
     });
 
     it("will not unlock an achievement if the count isn't reached", () => {
@@ -48,11 +55,15 @@ describe("ValueAchievementCondition", () => {
             valueId: "test-event",
             count: 2,
         });
-        condition.bind(eventCountRecorder, unlocker, "test-achievement");
+        condition.bind(
+            eventCountRecorder,
+            achievementStatusRecorder,
+            "test-achievement",
+        );
         condition.postBind();
         condition.onEventCounted("test-event");
 
-        expect(unlocker.unlock).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalled();
     });
 
     it("will not unlock an achievement when the event is unrelated", () => {
@@ -62,10 +73,14 @@ describe("ValueAchievementCondition", () => {
             valueId: "test-event",
             count: 1,
         });
-        condition.bind(eventCountRecorder, unlocker, "test-achievement");
+        condition.bind(
+            eventCountRecorder,
+            achievementStatusRecorder,
+            "test-achievement",
+        );
         condition.postBind();
         condition.onEventCounted("unrealted-event");
 
-        expect(unlocker.unlock).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalled();
     });
 });

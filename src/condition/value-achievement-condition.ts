@@ -1,3 +1,4 @@
+import { AchievementStatus } from "../model";
 import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
 
@@ -16,7 +17,10 @@ export class ValueAchievementCondition extends AchievementCondition {
 
         const count = this.countRecorder.getValue(valueId);
         if (count >= this.count) {
-            this.unlocker.unlock(this.achievementId);
+            this.achievementStatusRecorder.setStatus(
+                this.achievementId,
+                AchievementStatus.UNLOCKED,
+            );
         }
     }
 

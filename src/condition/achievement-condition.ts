@@ -1,19 +1,19 @@
-import { AchievementUnlocker } from "../persistence/achievement-unlocker";
+import { AchievementStatusRecorder } from "../persistence/achievement-status-recorder";
 import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementProgress } from "../progress";
 
 export abstract class AchievementCondition {
     protected countRecorder: ValueRecorder;
-    protected unlocker: AchievementUnlocker;
+    protected achievementStatusRecorder: AchievementStatusRecorder;
     protected achievementId: string;
 
     bind(
         countRecorder: ValueRecorder,
-        unlocker: AchievementUnlocker,
+        achievementStatusRecorder: AchievementStatusRecorder,
         achievementId: string,
     ): void {
         this.countRecorder = countRecorder;
-        this.unlocker = unlocker;
+        this.achievementStatusRecorder = achievementStatusRecorder;
         this.achievementId = achievementId;
     }
 

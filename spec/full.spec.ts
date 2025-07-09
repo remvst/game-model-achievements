@@ -1,7 +1,8 @@
 import { World, WorldEvent } from "@remvst/game-model";
 import {
     Achievement,
-    AchievementUnlocker,
+    AchievementStatus,
+    AchievementStatusRecorder,
     SequenceCounter,
     ValueCounter,
     ValueRecorder,
@@ -22,8 +23,8 @@ class Kill implements WorldEvent {
 
 describe("full example", () => {
     let world: World;
-    let unlocker: AchievementUnlocker;
-    let recorder: ValueRecorder;
+    let achievementStatusRecorder: AchievementStatusRecorder;
+    let valueRecorder: ValueRecorder;
     let jumpCounter: ValueCounter;
     let killCounter: ValueCounter;
     let watcher: WorldAchievementWatcher;
@@ -31,14 +32,13 @@ describe("full example", () => {
     beforeEach(() => {
         world = new World();
 
-        unlocker = {
-            unlock: jasmine.createSpy("unlock"),
-            fail: jasmine.createSpy("fail"),
+        achievementStatusRecorder = {
+            setStatus: jasmine.createSpy("setStatus"),
             status: jasmine.createSpy("status"),
         };
 
         const events = new Map<string, number>();
-        recorder = {
+        valueRecorder = {
             getValue: jasmine
                 .createSpy("eventCount")
                 .and.callFake((id) => events.get(id) || 0),
@@ -58,8 +58,8 @@ describe("full example", () => {
         });
 
         watcher = new WorldAchievementWatcher({
-            unlocker,
-            recorder,
+            achievementStatusRecorder: achievementStatusRecorder,
+            recorder: valueRecorder,
         })
             .addCounter(jumpCounter)
             .addCounter(killCounter);
@@ -82,8 +82,10 @@ describe("full example", () => {
         });
 
         world.addEvent(new Jump());
-        expect(unlocker.unlock).toHaveBeenCalledWith("first-jump");
-        expect(unlocker.fail).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).toHaveBeenCalledWith(
+            "first-jump",
+            AchievementStatus.UNLOCKED,
+        );
 
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 1,
@@ -117,8 +119,10 @@ describe("full example", () => {
             world.addEvent(new Jump());
         }
 
-        expect(unlocker.unlock).toHaveBeenCalledWith("jump-5-times");
-        expect(unlocker.fail).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).toHaveBeenCalledWith(
+            "jump-5-times",
+            AchievementStatus.UNLOCKED,
+        );
 
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 5,
@@ -146,8 +150,10 @@ describe("full example", () => {
 
         world.addEvent(new Jump());
 
-        expect(unlocker.unlock).not.toHaveBeenCalled();
-        expect(unlocker.fail).toHaveBeenCalledWith("never-jump");
+        expect(achievementStatusRecorder.setStatus).toHaveBeenCalledWith(
+            "never-jump",
+            AchievementStatus.FAILED,
+        );
 
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 0,
@@ -175,7 +181,7 @@ describe("full example", () => {
         });
 
         world.addEvent(new Jump());
-        expect(unlocker.unlock).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalled();
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 1,
             target: 2,
@@ -183,9 +189,11 @@ describe("full example", () => {
 
         world.addEvent(new Kill());
 
-        expect(unlocker.unlock).toHaveBeenCalledWith("jump-and-kill");
+        expect(achievementStatusRecorder.setStatus).toHaveBeenCalledWith(
+            "jump-and-kill",
+            AchievementStatus.UNLOCKED,
+        );
 
-        expect(unlocker.fail).not.toHaveBeenCalled();
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 2,
             target: 2,
@@ -220,13 +228,14 @@ describe("full example", () => {
             watcher.update();
         }
 
-        expect(unlocker.unlock).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalled();
 
         world.addEvent(new Kill());
         watcher.update();
 
-        expect(unlocker.unlock).toHaveBeenCalledWith(
+        expect(achievementStatusRecorder.setStatus).toHaveBeenCalledWith(
             "kill-twice-without-jumping",
+            AchievementStatus.UNLOCKED,
         );
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 1,

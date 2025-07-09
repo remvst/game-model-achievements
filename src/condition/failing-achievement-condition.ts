@@ -1,4 +1,5 @@
-import { AchievementUnlocker } from "../persistence/achievement-unlocker";
+import { AchievementStatus } from "../model";
+import { AchievementStatusRecorder } from "../persistence/achievement-status-recorder";
 import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";
@@ -10,16 +11,20 @@ export class FailingAchievementCondition extends AchievementCondition {
 
     bind(
         countRecorder: ValueRecorder,
-        unlocker: AchievementUnlocker,
+        achievementStatusRecorder: AchievementStatusRecorder,
         achievementId: string,
     ): void {
-        super.bind(countRecorder, unlocker, achievementId);
+        super.bind(countRecorder, achievementStatusRecorder, achievementId);
         this.original.bind(
             countRecorder,
             {
-                unlock: () => this.unlocker.fail(this.achievementId),
-                fail: () => {},
-                status: () => this.unlocker.status(this.achievementId),
+                setStatus: () =>
+                    this.achievementStatusRecorder.setStatus(
+                        this.achievementId,
+                        AchievementStatus.FAILED,
+                    ),
+                status: () =>
+                    this.achievementStatusRecorder.status(this.achievementId),
             },
             achievementId,
         );
