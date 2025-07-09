@@ -76,13 +76,19 @@ describe("full example", () => {
         watcher.bind(world);
         watcher.postBind();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 0, target: 1 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 0,
+            target: 1,
+        });
 
         world.addEvent(new Jump());
         expect(unlocker.unlock).toHaveBeenCalledWith("first-jump");
         expect(unlocker.fail).not.toHaveBeenCalled();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 1, target: 1 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 1,
+            target: 1,
+        });
     });
 
     it("can unlock the 5 jumps achievement", () => {
@@ -96,10 +102,16 @@ describe("full example", () => {
         watcher.bind(world);
         watcher.postBind();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 0, target: 5 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 0,
+            target: 5,
+        });
 
         world.addEvent(new Jump());
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 1, target: 5 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 1,
+            target: 5,
+        });
 
         for (let i = 0; i < 4; i++) {
             world.addEvent(new Jump());
@@ -108,7 +120,10 @@ describe("full example", () => {
         expect(unlocker.unlock).toHaveBeenCalledWith("jump-5-times");
         expect(unlocker.fail).not.toHaveBeenCalled();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 5, target: 5 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 5,
+            target: 5,
+        });
     });
 
     it("can fail the never jump achievement", () => {
@@ -124,14 +139,20 @@ describe("full example", () => {
         watcher.bind(world);
         watcher.postBind();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 1, target: 1 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 1,
+            target: 1,
+        });
 
         world.addEvent(new Jump());
 
         expect(unlocker.unlock).not.toHaveBeenCalled();
         expect(unlocker.fail).toHaveBeenCalledWith("never-jump");
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 0, target: 1 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 0,
+            target: 1,
+        });
     });
 
     it("can unlock the jump and kill achievement", () => {
@@ -148,18 +169,27 @@ describe("full example", () => {
         watcher.bind(world);
         watcher.postBind();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 0, target: 2 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 0,
+            target: 2,
+        });
 
         world.addEvent(new Jump());
         expect(unlocker.unlock).not.toHaveBeenCalled();
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 1, target: 2 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 1,
+            target: 2,
+        });
 
         world.addEvent(new Kill());
 
         expect(unlocker.unlock).toHaveBeenCalledWith("jump-and-kill");
 
         expect(unlocker.fail).not.toHaveBeenCalled();
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 2, target: 2 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 2,
+            target: 2,
+        });
     });
 
     it("can unlock kill twice without jumping achievement", () => {
@@ -180,7 +210,10 @@ describe("full example", () => {
         watcher.bind(world);
         watcher.postBind();
 
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 0, target: 1 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 0,
+            target: 1,
+        });
 
         for (const event of [new Kill(), new Jump(), new Kill()]) {
             world.addEvent(event);
@@ -195,6 +228,9 @@ describe("full example", () => {
         expect(unlocker.unlock).toHaveBeenCalledWith(
             "kill-twice-without-jumping",
         );
-        expect(watcher.achievements[0].condition.progress()).toEqual({ current: 1, target: 1 });
+        expect(watcher.achievements[0].condition.progress()).toEqual({
+            current: 1,
+            target: 1,
+        });
     });
 });
