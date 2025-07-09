@@ -1,15 +1,15 @@
 import { AchievementCondition } from "../condition/achievement-condition";
-import { ValueType } from "../model";
+import { AchievementId, ValueType } from "../model";
 
 export class Achievement {
-    readonly id: string;
+    readonly id: AchievementId;
     readonly label: string;
     readonly condition: AchievementCondition;
     readonly hideProgress: boolean;
     readonly valueType: ValueType;
 
     constructor(opts: {
-        readonly id: string;
+        readonly id: AchievementId;
         readonly label: string;
         readonly condition: AchievementCondition;
         readonly hideProgress?: boolean;

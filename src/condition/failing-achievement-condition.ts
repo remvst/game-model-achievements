@@ -1,4 +1,4 @@
-import { AchievementUnlocker } from "../achievement-unlocker";
+import { AchievementUnlocker } from "../persistence/achievement-unlocker";
 import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementProgress } from "../progress";
 import { AchievementCondition } from "./achievement-condition";

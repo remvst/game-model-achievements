@@ -1,5 +1,5 @@
 import { World } from "@remvst/game-model";
-import { AchievementUnlocker } from "./achievement-unlocker";
+import { AchievementUnlocker } from "./persistence/achievement-unlocker";
 import { Achievement } from "./achievement/achievement";
 import { ValueCounter } from "./counting/value-counter";
 import { ValueRecorder } from "./persistence/value-recorder";
