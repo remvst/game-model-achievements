@@ -67,7 +67,7 @@ describe("ValueAchievementCondition", () => {
     });
 
     it("will not unlock an achievement when the event is unrelated", () => {
-        (eventCountRecorder.getValue as jasmine.Spy).and.returnValue(1);
+        (eventCountRecorder.getValue as jasmine.Spy).and.returnValue(0);
 
         const condition = new ValueAchievementCondition({
             valueId: "test-event",
@@ -79,8 +79,11 @@ describe("ValueAchievementCondition", () => {
             "test-achievement",
         );
         condition.postBind();
-        condition.onEventCounted("unrealted-event");
+        condition.onEventCounted("unrelated-event");
 
-        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalledWith(
+            jasmine.any(String),
+            AchievementStatus.UNLOCKED,
+        );
     });
 });

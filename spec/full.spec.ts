@@ -181,7 +181,11 @@ describe("full example", () => {
         });
 
         world.addEvent(new Jump());
-        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalled();
+        expect(achievementStatusRecorder.setStatus).not.toHaveBeenCalledWith(
+            jasmine.any(String),
+            AchievementStatus.UNLOCKED,
+        );
+
         expect(watcher.achievements[0].condition.progress()).toEqual({
             current: 1,
             target: 2,

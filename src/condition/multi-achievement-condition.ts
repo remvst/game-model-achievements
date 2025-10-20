@@ -4,13 +4,25 @@ import { ValueRecorder } from "../persistence/value-recorder";
 import { AchievementCondition } from "./achievement-condition";
 
 export class MultiAchievementCondition extends AchievementCondition {
-    private readonly conditions = new Set<AchievementCondition>();
-    private readonly failed = new Set<AchievementCondition>();
-    private readonly succeeded = new Set<AchievementCondition>();
+    private readonly statuses = new Map<
+        AchievementCondition,
+        AchievementStatus
+    >();
 
-    constructor(conditions: AchievementCondition[]) {
+    constructor(
+        readonly conditions: AchievementCondition[],
+        readonly status: (statuses: AchievementStatus[]) => AchievementStatus,
+    ) {
         super();
-        this.conditions = new Set(conditions);
+    }
+
+    private onStatusUpdate() {
+        const statuses = this.conditions.map(
+            (condition) =>
+                this.statuses.get(condition) || AchievementStatus.IN_PROGRESS,
+        );
+        const status = this.status(statuses);
+        this.achievementStatusRecorder.setStatus(this.achievementId, status);
     }
 
     bind(
@@ -25,25 +37,11 @@ export class MultiAchievementCondition extends AchievementCondition {
                 countRecorder,
                 {
                     setStatus: (_, status) => {
-                        if (status === AchievementStatus.UNLOCKED) {
-                            this.succeeded.add(condition);
+                        const oldStatus = this.statuses.get(condition);
+                        if (oldStatus === status) return;
 
-                            if (
-                                this.succeeded.size === this.conditions.size &&
-                                this.failed.size === 0
-                            ) {
-                                achievementStatusRecorder.setStatus(
-                                    this.achievementId,
-                                    AchievementStatus.UNLOCKED,
-                                );
-                            }
-                        } else if (status === AchievementStatus.FAILED) {
-                            this.failed.add(condition);
-                            achievementStatusRecorder.setStatus(
-                                this.achievementId,
-                                AchievementStatus.FAILED,
-                            );
-                        }
+                        this.statuses.set(condition, status);
+                        this.onStatusUpdate();
                     },
                     status: () =>
                         achievementStatusRecorder.status(this.achievementId),
@@ -58,10 +56,8 @@ export class MultiAchievementCondition extends AchievementCondition {
 
         for (const condition of this.conditions) {
             condition.postBind();
+            this.statuses.set(condition, AchievementStatus.IN_PROGRESS);
         }
-
-        this.failed.clear();
-        this.succeeded.clear();
     }
 
     onEventCounted(valueId: string): void {
@@ -71,7 +67,7 @@ export class MultiAchievementCondition extends AchievementCondition {
     }
 
     progress(): AchievementProgress | null {
-        const acc = {
+        const acc: AchievementProgress = {
             current: 0,
             target: 0,
         };
@@ -85,8 +81,22 @@ export class MultiAchievementCondition extends AchievementCondition {
     }
 }
 
-export function succeedIfAll(
-    ...conditions: AchievementCondition[]
-): MultiAchievementCondition {
-    return new MultiAchievementCondition(conditions);
+export function succeedIfAll(...conditions: AchievementCondition[]) {
+    return new MultiAchievementCondition(conditions, (statuses) => {
+        if (statuses.some((status) => status === AchievementStatus.FAILED))
+            return AchievementStatus.FAILED;
+        if (statuses.every((status) => status === AchievementStatus.UNLOCKED))
+            return AchievementStatus.UNLOCKED;
+        return AchievementStatus.IN_PROGRESS;
+    });
+}
+
+export function succeedIfAny(...conditions: AchievementCondition[]) {
+    return new MultiAchievementCondition(conditions, (statuses) => {
+        if (statuses.some((status) => status === AchievementStatus.FAILED))
+            return AchievementStatus.FAILED;
+        if (statuses.some((status) => status === AchievementStatus.UNLOCKED))
+            return AchievementStatus.UNLOCKED;
+        return AchievementStatus.IN_PROGRESS;
+    });
 }

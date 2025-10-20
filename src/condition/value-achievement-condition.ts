@@ -11,6 +11,15 @@ export class ValueAchievementCondition extends AchievementCondition {
         this.count = opts.count;
     }
 
+    postBind(): void {
+        super.postBind();
+
+        const count = this.countRecorder.getValue(this.valueId);
+        if (count > 0) {
+            this.onEventCounted(this.valueId);
+        }
+    }
+
     onEventCounted(valueId: string): void {
         if (valueId !== this.valueId) return;
 
