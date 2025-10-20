@@ -82,7 +82,7 @@ export class MultiAchievementCondition extends AchievementCondition {
 }
 
 export function succeedIfAll(...conditions: AchievementCondition[]) {
-    return new MultiAchievementCondition(conditions, (statuses) => {
+    return combineConditions(conditions, (statuses) => {
         if (statuses.some((status) => status === AchievementStatus.FAILED))
             return AchievementStatus.FAILED;
         if (statuses.every((status) => status === AchievementStatus.UNLOCKED))
@@ -92,11 +92,18 @@ export function succeedIfAll(...conditions: AchievementCondition[]) {
 }
 
 export function succeedIfAny(...conditions: AchievementCondition[]) {
-    return new MultiAchievementCondition(conditions, (statuses) => {
+    return combineConditions(conditions, (statuses) => {
         if (statuses.some((status) => status === AchievementStatus.FAILED))
             return AchievementStatus.FAILED;
         if (statuses.some((status) => status === AchievementStatus.UNLOCKED))
             return AchievementStatus.UNLOCKED;
         return AchievementStatus.IN_PROGRESS;
     });
+}
+
+export function combineConditions(
+    conditions: AchievementCondition[],
+    mapper: (statuses: AchievementStatus[]) => AchievementStatus,
+) {
+    return new MultiAchievementCondition(conditions, mapper);
 }
